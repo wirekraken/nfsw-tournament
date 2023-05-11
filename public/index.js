@@ -202,12 +202,15 @@ function tournament() {
 
     pushLeaderboard.onclick = () => {
         console.log(localStorage.Racers)
+
+        const sorted = sort(JSON.parse(localStorage.Racers));
+
         fetch('http://localhost:5000/api', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: localStorage.Racers
+            body: JSON.stringify(sorted)
         })
     }
     // clear.onclick = e => {
