@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournament admin</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <!-- <script type="text/javascript" src="registed.json"></script> -->
+</head>
+<body>
+    <button id="start-registration">REGISTRATION</button>
+    <div class="regist-racer">
+        <div>Registration racers</div>
+        <form class="regist-racer__form">
+            <input oninput="this.value=this.value.toUpperCase()" type="text" placeholder="Nickname">
+            <input type="submit" value="+"><br>
+        </form>
+        <div class="regist-racer__list"></div>
+        <button id="start-tournament-btn">Tournament</button>
+    </div>
+
+    <div class="tournament_block">
+        <div class="tournament_wrapper">
+           <div class="count">
+                <div class="count__selector">
+                    <form class="count__selector_form">
+                        <div class="count__selector_form_racer"><b>1</b><select st='1'></select><input type="number"></div>
+                        <div class="count__selector_form_racer"><b>2</b><select st='2'></select><input type="number"></div>
+                        <div class="count__selector_form_racer"><b>3</b><select st='3'></select><input type="number"></div>
+                        <div class="count__selector_form_racer"><b>4</b><select st='4'></select><input type="number"></div>
+                        <div class="count__selector_form_racer"><b>5</b><select st='5'></select><input type="number"></div>
+                        <div class="count__selector_form_racer"><b>6</b><select st='6'></select><input type="number"></div>
+                        <div class="count__selector_form_racer"><b>7</b><select st='7'></select><input type="number"></div>
+                        <div class="count__selector_form_racer"><b>8</b><select st='8'></select><input type="number"></div>
+                        <dir class="count__btn_block">
+                            <button id="save">Save</button>
+                        </dir>
+                    </form>
+                </div>
+            </div>
+
+            <div class="leaderboard">
+                <div class="leaderboard__header">LEADERBOARD</div>
+                <div class="leaderboard__list"></div>
+            </div> 
+        </div>
+
+        <dir class="control">
+            <button id='remove-tournament'>Remove tournament</button>
+            <button id='push-leaderboard'>Push leaderboard</button>
+        </dir>
+    </div>
+
+    <script type="text/javascript" src="index.js"></script>
+
+</body>
+</html>

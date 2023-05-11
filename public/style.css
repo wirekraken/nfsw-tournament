@@ -221,3 +221,8 @@ body {
     text-align: center;
 }
 
+
+.control {
+    display: flex;
+    justify-content: space-around;
+}
