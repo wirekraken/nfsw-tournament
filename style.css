@@ -1,0 +1,223 @@
+body {
+    /*background: #36393f;*/
+    /*font-family: NFSWSubHeadline, Arial;*/
+    font-family: Arial;
+}
+
+@font-face {
+    font-family: "NFSWSubHeadline";
+    src: url("NFSWSubHeadline.woff2") format("woff2");
+}
+
+#start-registration {
+    /*background: red;*/
+    /*padding: 3px;*/
+    position: absolute;
+    /*display: none;*/
+}
+
+#start-tournament-btn {
+    font-size: 16px;
+    margin: 0 auto;
+    margin-top: 20px;
+    display: block;
+
+}
+
+.regist-racer {
+    border-radius: 3px;
+    padding: 20px;
+    font-size: 20px;
+    background: red;
+    background: rgba(0,0,0,.1);
+    display: inline-block;
+    /*width: 300px;*/
+    position: absolute;
+    top: 20vh;
+    /*bottom: 50%;*/
+    left: 50%;
+    /*right: 50%;*/
+    transform: translateX(-50%);
+
+}
+
+.regist-racer__form {
+    /*background: gold;*/
+    background: rgba(0,0,0,.1);
+    display: flex;
+    /*gap: 5px;*/
+    margin-top: 10px;
+
+}
+
+.regist-racer__form input {
+    font-size: 15px;
+    padding: 3px;
+    margin: 5px;
+}
+
+.regist-racer__form input[type=submit] {
+    min-width: 30px;
+}
+
+.regist-racer__list {
+    margin-top: 20px;
+    /*background: gold;*/
+    font-size: 15px;
+    font-style: italic;
+    font-weight: bold;
+
+}
+
+.registered-racer {
+    /*background: green;*/
+    background: rgba(0,0,0,.1);
+
+    padding: 2px 2px 2px 10px;
+    margin: 1px 0 1px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.tournament_block {
+    background: red;
+    background: rgba(0,0,0,.1);
+    padding: 20px;
+    position: absolute;
+    top: 60px;
+    left: 50%;
+    right: 50%;
+    transform: translateX(-50%);
+    width: 80vw;
+    display: block;
+
+}
+.control {
+    /*background: gold;*/
+
+}
+#remove-tournament {
+    background: rgba(255,50,50,.8);
+    /*min-width: 200px;*/
+    /*margin: 20px;*/
+
+}
+
+.tournament_wrapper {
+    gap: 10vw;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    /*background: green;*/
+
+}
+
+
+
+.count {
+    border-radius: 3px;
+    padding: 10px;
+    background: coral;
+    display: inline-block;
+    background: rgba(0,0,0,.1);
+
+}
+
+.count__selector {
+    /*background: gold;*/
+    padding: 3px;
+
+}
+.count__selector_form_racer {
+    /*background: blue;*/
+    border: 1px solid white;
+    display: flex;
+    margin: 1px 0 1px 0;
+}
+.count__selector_form_racer * {
+    font-size: 15px;
+    padding: 3px;
+    font-weight: bold;
+}
+.count__selector_form_racer select {
+    font-weight: bold;
+    min-width: 140px
+}
+.count__selector_form_racer option {
+    font-weight: normal;
+}
+
+.count__selector_form_racer b {
+    /*background: red;*/
+    min-width: 20px;
+    font-family: Arial;
+    text-align: center;
+}
+
+.count__selector_form_racer input[type=number] {
+    /*background: red;*/
+    width: 40px;
+}
+
+.count__btn_block {
+    margin: 0 auto;
+    /*background: red;*/
+    margin-top: 10px;
+    display: flex;
+    /*justify-content: center;*/
+}
+
+.leaderboard {
+    border-radius: 3px;
+    padding: 10px;
+    font-size: 16px;
+    background: rgba(0,0,0,.1);
+    display: inline-block;
+    font-weight: bold;
+
+}
+.leaderboard__header {
+    /*background: red;*/
+    text-align: center;
+    font-size: 18px;
+}
+
+.leaderboard__list {
+    /*background: gold;*/
+    /*display: flex;*/
+    /*gap: 5px;*/
+    margin-top: 10px;
+
+}
+
+.leaderboard__list_racer {
+    /*background: coral;*/
+    margin: 1px 0 1px 0;
+    /*padding: 3px;*/
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0,0,0,.1);
+
+}
+
+.leaderboard__list_racer-nickname {
+    flex-grow: 1;
+    min-width: 200px;
+    /*background: red;*/
+
+    padding: 3px;
+
+}
+
+.leaderboard__list_racer-position {
+    min-width: 30px;
+    text-align: center;
+}
+
+.leaderboard__list_racer-points {
+    min-width: 40px;
+    text-align: center;
+}
+

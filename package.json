@@ -1,0 +1,12 @@
+{
+  "name": "nfsw-tournament",
+  "version": "1.0.0",
+  "description": "Web app/discord bot for tournament administration",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
