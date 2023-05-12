@@ -1,37 +1,78 @@
 import express from 'express';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
-
+import fs from 'fs';
 import bot from './bot.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
 const PORT = 5000;
+const channelID = '1106138987694919802';
 
 const app = express();
 
 app.use(express.static('public'));
 app.use(express.json());
 
-app.get('/', (req, res) => {
-	// res.sendFile(__dirname + '/psdblic/index.html');
+
+// to save the registration message
+let regMessageID = '';
+
+fs.readFile('./message-id', 'utf8', (err, data) => {
+    (!err) ? regMessageID = data : console.log(err);
+    // console.log('readed', regMessageID)
 })
 
-app.post('/api', (req, res) => {
-	console.log(req.body);
 
-	let format = '';
-	let i = 1;
-	for (const [key, value] of Object.entries(req.body)) {
-		format += `**${i++}) ${key}: ${value}**\n`;
-	}
-	// console.log(format)
+app.post('/api/regist', (req, res) => {
+    console.log(req.body);
 
-	const tournamentChannel = bot.channels.cache.get('1106138987694919802');
-	tournamentChannel.send(format);
+    let formated = ':stopwatch: **REGISTERED**\n';
+    let pos = 1;
+
+    for (const [key, value] of Object.entries(req.body)) {
+        formated += `  **${pos++})** ${key} **${value}**\n`;
+    }
+
+    const tournamentChannel = bot.channels.cache.get(channelID);
+
+    if (!regMessageID) {
+        getMsgId().then(res => {
+            regMessageID = res
+            fs.writeFile('./message-id', regMessageID, err => {
+                if (err) console.log(err);
+                // console.log('saved', regMessageID)
+            })
+        });
+    }
+    else {
+        tournamentChannel.messages.fetch(regMessageID).then(message => {
+            message.edit(formated);
+        })
+    }
+
+    async function getMsgId() {
+        const message = await tournamentChannel.send(formated);
+        // console.log(message.id);
+        return message.id;
+    }
+
+    res.status(200).send();
+})
+
+app.post('/api/event', (req, res) => {
+
+    let formated = ':small_orange_diamond: **LEADERBOARD** :small_orange_diamond:\n';
+    let pos = 1;
+
+    for (const [key, value] of Object.entries(req.body)) {
+        formated += `  **${pos++})** ${key} **${value}**\n`;
+    }
+    // console.log(formated)
+
+    const tournamentChannel = bot.channels.cache.get(channelID);
+    tournamentChannel.send(formated);
+
+    res.status(200).send();
 })
 
 
 app.listen(PORT, err => {
-	err ? console.log(err) : console.log(`Listening ${ PORT }`);
+    err ? console.log(err) : console.log(`Listening ${ PORT }`);
 })

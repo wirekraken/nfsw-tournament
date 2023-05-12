@@ -16,6 +16,14 @@ body {
     /*display: none;*/
 }
 
+#push-regist-btn {
+    font-size: 16px;
+    margin: 0 auto;
+    margin-top: 20px;
+    display: block;
+
+}
+
 #start-tournament-btn {
     font-size: 16px;
     margin: 0 auto;
@@ -55,6 +63,9 @@ body {
     padding: 3px;
     margin: 5px;
 }
+.regist-racer__form input[type=number] {
+    width: 60px;
+}
 
 .regist-racer__form input[type=submit] {
     min-width: 30px;
@@ -69,7 +80,7 @@ body {
 
 }
 
-.registered-racer {
+.registered_racer {
     /*background: green;*/
     background: rgba(0,0,0,.1);
 
@@ -78,6 +89,13 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+.registered_racer-nickname {
+    flex-grow: 1;
+}
+.registered_racer-time {
+    margin: 0 10px 0 10px;
 }
 
 .tournament_block {
