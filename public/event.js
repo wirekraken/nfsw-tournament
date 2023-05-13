@@ -3,7 +3,7 @@ const racerSelectElems = document.querySelectorAll('.count__selector_form select
 const racerInputElems = document.querySelectorAll('.count__selector_form_racer input[type=number]');
 const saveLeaderboard = document.querySelector('#save-leaderboard');
 const pushLeaderboard = document.querySelector('#push-leaderboard');
-const removeTournament = document.querySelector('#remove-tournament');
+const finishTournament = document.querySelector('#finish-tournament');
 
 
 function tournament(registeredRacers) {
@@ -105,20 +105,38 @@ function tournament(registeredRacers) {
 }
 
 
-removeTournament.onclick = () => {
-    const confirm = window.confirm('Tournament data will be cleared');
+finishTournament.onclick = () => {
+    const confirm = window.confirm('Finish the tournament?');
 
     if (confirm) {
-        localStorage.clear();
-        updateLeaderboard();
-        registeredListBlock.innerHTML = '';
+        const sorted = sort(JSON.parse(localStorage.RegisteredRacersPoint));
+        
+        fetch('http://localhost:5000/api/finish', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(sorted)
+        })
+        .then(res => {
+            if (res.status === 200) {
 
-        registeredRacers = [];
+                localStorage.clear();
+                updateLeaderboard();
+                registeredListBlock.innerHTML = '';
 
-        for (const item of racerSelectElems) item.innerHTML = '';
+                registeredRacersTime = {};
+                registeredRacers = [];
 
-        registRacersBlock.style.display = 'inline-block';
-        tournamentBlock.style.display = 'none';
+                for (const item of racerSelectElems) item.innerHTML = '';
+
+                registRacersBlock.style.display = 'inline-block';
+                tournamentBlock.style.display = 'none';
+                
+                console.log(res.status, 'finished');
+            }
+        });
+
     }
 }
 

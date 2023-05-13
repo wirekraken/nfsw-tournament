@@ -18,8 +18,8 @@ let registeredRacers = [];
 addRacer.onclick = (e) => {
     e.preventDefault();
 
-    const newRacerNickname = document.querySelector('.regist-racer__form input[type=text]');
-    const newRacerTime = document.querySelector('.regist-racer__form input[type=number]');
+    const newRacerNickname = document.querySelector('.regist-racer__form input[name=nickname]');
+    const newRacerTime = document.querySelector('.regist-racer__form input[name=time]');
 
     if (!newRacerNickname.value) return;
 
@@ -61,8 +61,11 @@ addRacer.onclick = (e) => {
 
     function sortReverse(racers) {
         const sortedObj = {};
-        const sorted = Object.entries(racers).sort((a, b) => a[1] - b[1]);
-        
+
+        const sorted = Object.entries(racers).sort((a, b) => {
+            return a[1].toString().localeCompare(b[1]);
+        });
+
         for (let i = 0; i < sorted.length; i++) {
             sortedObj[sorted[i][0]] = sorted[i][1];
         }
@@ -80,6 +83,8 @@ function removeRacer(thisElem) {
     const newObj = JSON.parse(localStorage.RegisteredRacersTime);
     delete newObj[nickname];
 
+    registeredRacers = Object.keys(newObj);
+
     localStorage.RegisteredRacersTime = JSON.stringify(newObj);
 
     delete registeredRacersTime[nickname];
@@ -88,7 +93,7 @@ function removeRacer(thisElem) {
 
 
 pushRegist.onclick = () => {
-    console.log(localStorage.RegisteredRacersTime);
+    if (registeredRacers.length < 2) return;
 
     fetch('http://localhost:5000/api/regist', {
         method: 'POST',
@@ -103,10 +108,15 @@ pushRegist.onclick = () => {
 startTournament.onclick = () => {
     if (registeredRacers.length < 2) return;
 
-    tournament(registeredRacers);
+    const confirm = window.confirm('Registration will be terminated. Continue?');
 
-    tournamentBlock.style.display = 'block';
-    registRacersBlock.style.display = 'none';
+    if (confirm) {
+        tournament(registeredRacers);
+
+        tournamentBlock.style.display = 'block';
+        registRacersBlock.style.display = 'none';
+    }
+
 }
 
 if (localStorage.RegisteredRacersTime) {

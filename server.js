@@ -1,6 +1,6 @@
 import express from 'express';
 import fs from 'fs';
-import bot from './bot.js';
+import { client, EmbedBuilder } from './bot.js';
 
 const PORT = 5000;
 const channelID = '1106138987694919802';
@@ -11,26 +11,37 @@ app.use(express.static('public'));
 app.use(express.json());
 
 
-// to save the registration message
-let regMessageID = '';
-
-fs.readFile('./message-id', 'utf8', (err, data) => {
-    (!err) ? regMessageID = data : console.log(err);
-    // console.log('readed', regMessageID)
-})
-
+const embed = new EmbedBuilder();
 
 app.post('/api/regist', (req, res) => {
-    console.log(req.body);
 
-    let formated = ':stopwatch: **REGISTERED**\n';
+    const timeAttackIcon = 'https://world-evolved.ru/templates/statistics/images/races/timeattack.png'
+
+    // let formated = ':stopwatch: **REGISTERED**\n';
+    let formated = '';
     let pos = 1;
 
     for (const [key, value] of Object.entries(req.body)) {
-        formated += `  **${pos++})** ${key} **${value}**\n`;
+        formated += `**${pos++}: ${key}**  ${value}\n`;
     }
 
-    const tournamentChannel = bot.channels.cache.get(channelID);
+    embed
+        .setColor(0x237987)
+        .setAuthor({ name: 'КВАЛИФИКАЦИЯ | QUALIFICATION', iconURL: timeAttackIcon })
+        .setTitle('Допускаются | Qualified Racers\n')
+        .setDescription(formated)
+        .setTimestamp()
+        .setFooter({ text: 'Last update' });
+
+    const tournamentChannel = client.channels.cache.get(channelID);
+
+
+    let regMessageID = '';
+
+    // to save the registration message
+    try {
+        regMessageID = fs.readFileSync('./message-id', {encoding:'utf8',flag:'r'});
+    } catch(e) {}
 
     if (!regMessageID) {
         getMsgId().then(res => {
@@ -43,12 +54,12 @@ app.post('/api/regist', (req, res) => {
     }
     else {
         tournamentChannel.messages.fetch(regMessageID).then(message => {
-            message.edit(formated);
+            message.edit({ embeds: [embed] });
         })
     }
 
     async function getMsgId() {
-        const message = await tournamentChannel.send(formated);
+        const message = await tournamentChannel.send({ embeds: [embed] });
         // console.log(message.id);
         return message.id;
     }
@@ -58,18 +69,37 @@ app.post('/api/regist', (req, res) => {
 
 app.post('/api/event', (req, res) => {
 
-    let formated = ':small_orange_diamond: **LEADERBOARD** :small_orange_diamond:\n';
+    let formated = ':pushpin: **Турнирная Гонка** | **Tournament Race**\n';
     let pos = 1;
 
     for (const [key, value] of Object.entries(req.body)) {
-        formated += `  **${pos++})** ${key} **${value}**\n`;
+        formated += `  **${pos++}** - ${key} - **${value}** :small_orange_diamond:\n`;
     }
     // console.log(formated)
 
-    const tournamentChannel = bot.channels.cache.get(channelID);
+    const tournamentChannel = client.channels.cache.get(channelID);
     tournamentChannel.send(formated);
 
     res.status(200).send();
+})
+
+app.post('/api/finish', (req, res) => {
+
+    let formated = `:tada: Турнир окончен. Спасибо за участие.\n:tada: The tournament is over. Thank you for participating\n`;
+    let pos = 1;
+
+    for (const [key, value] of Object.entries(req.body)) {
+        formated += `  **${pos++}** - ${key} - **${value}** :small_orange_diamond:\n`;
+    }
+    // console.log(formated)
+
+    const tournamentChannel = client.channels.cache.get(channelID);
+    tournamentChannel.send(formated);
+
+    fs.unlink('./message-id', (err) => {
+        // console.log('Tournament finished');
+        res.status(200).send();
+    });
 })
 
 
