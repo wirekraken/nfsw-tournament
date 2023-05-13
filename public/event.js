@@ -6,6 +6,8 @@ const pushLeaderboard = document.querySelector('#push-leaderboard');
 const finishTournament = document.querySelector('#finish-tournament');
 
 
+// localStorage.RaceNumber = 1;
+
 function tournament(registeredRacers) {
 
     const racers = {};
@@ -54,6 +56,9 @@ function tournament(registeredRacers) {
     saveLeaderboard.onclick = (e) => {
         e.preventDefault();
 
+        if (localStorage.RaceNumber) localStorage.RaceNumber = +localStorage.RaceNumber + 1;
+        else localStorage.RaceNumber = 1;
+
         // fill options after saving
         for (const select of racerSelectElems) {
 
@@ -79,6 +84,8 @@ function tournament(registeredRacers) {
             localStorage.RegisteredRacersPoint = JSON.stringify(calculatedObj);
 
             updateLeaderboard(calculatedObj);
+
+            localStorage.EventRacersPoint = JSON.stringify(racers);
 
             // reset
             for (const key of Object.keys(racers)) {
@@ -110,7 +117,7 @@ finishTournament.onclick = () => {
 
     if (confirm) {
         const sorted = sort(JSON.parse(localStorage.RegisteredRacersPoint));
-        
+
         fetch('http://localhost:5000/api/finish', {
             method: 'POST',
             headers: {
@@ -146,12 +153,25 @@ pushLeaderboard.onclick = () => {
 
     const sorted = sort(JSON.parse(localStorage.RegisteredRacersPoint));
 
+    if (localStorage.EventRacersPoint) {
+        const eventRacersPoints = JSON.parse(localStorage.EventRacersPoint);
+
+        for (const [key, value] of Object.entries(sorted)) {
+            sorted[key] = [value, '+' + eventRacersPoints[key]];
+        }
+    }
+    else {
+        for (const [key, value] of Object.entries(sorted)) {
+            sorted[key] = [value, ''];
+        }
+    }
+
     fetch('http://localhost:5000/api/event', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(sorted)
+        body: JSON.stringify({ RaceNumber: localStorage.RaceNumber, Racers: sorted })
     })
     .then(res => console.log(res.status));
 
@@ -160,8 +180,10 @@ pushLeaderboard.onclick = () => {
 
 function updateLeaderboard(racers) {
 
+    const raceNumberElem = document.querySelector('.leaderboard__race-number');
     const racersList = document.querySelector('.leaderboard__list');
     racersList.innerHTML = '';
+    raceNumberElem.innerText = 'Race №' + localStorage.RaceNumber;
 
     if (!racers) return;
 

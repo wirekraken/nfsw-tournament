@@ -98,6 +98,45 @@ body {
     margin: 0 10px 0 10px;
 }
 
+.regist-racer__points-system {
+    background: rgba(0,0,0,.1);
+    text-align: center;
+    font-size: 16px;
+    margin: 10px;
+    padding: 10px;
+}
+
+.regist-racer__points-system * {
+    margin: 3px;
+}
+
+.regist-racer__points-system_inputs {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.regist-racer__points-system_inputs div {
+    background: rgba(0,0,0,.1);
+    padding: 2px;
+    margin: 2px;
+}
+
+.regist-racer__points-system_inputs span {
+    font-size: 15px;
+}
+.regist-racer__points-system_inputs input {
+    font-size: 15px;
+    width: 20px;
+    text-align: center;
+}
+
+.regist-racer__points-system input[name=points-system] {
+    font-size: 15px;
+    padding: 3px;
+    width: 100%;
+}
+
 .tournament_block {
     background: red;
     background: rgba(0,0,0,.1);
@@ -195,10 +234,13 @@ body {
     font-weight: bold;
 
 }
+.leaderboard__race-number {
+    font-size: 18px;
+}
 .leaderboard__header {
     /*background: red;*/
     text-align: center;
-    font-size: 18px;
+    font-size: 14px;
 }
 
 .leaderboard__list {

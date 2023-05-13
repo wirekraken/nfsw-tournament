@@ -69,11 +69,14 @@ app.post('/api/regist', (req, res) => {
 
 app.post('/api/event', (req, res) => {
 
-    let formated = ':pushpin: **Турнирная Гонка** | **Tournament Race**\n';
+    // let formated = ':pushpin: **Турнирная Гонка** | **Tournament Race**\n';
+    let formated = `:checkered_flag: **Турнирный заезд** | **Tournament race**\n**№${req.body.RaceNumber}**\n`;
     let pos = 1;
 
-    for (const [key, value] of Object.entries(req.body)) {
-        formated += `  **${pos++}** - ${key} - **${value}** :small_orange_diamond:\n`;
+    // console.log('body:', req.body.RaceNumber)
+
+    for (const [key, value] of Object.entries(req.body.Racers)) {
+        formated += `  **${pos++}** - ${key} - **${value[0]}** ${value[1]}:small_orange_diamond:\n`;
     }
     // console.log(formated)
 
@@ -85,7 +88,8 @@ app.post('/api/event', (req, res) => {
 
 app.post('/api/finish', (req, res) => {
 
-    let formated = `:tada: Турнир окончен. Спасибо за участие.\n:tada: The tournament is over. Thank you for participating\n`;
+    let formated = `:tada: Турнир окончен. Спасибо за участие.\n:tada: The tournament is over. Thank you for participating.\n`;
+    formated += `:trophy: Игрока **${Object.keys(req.body)[0]}** поздравляем с победой!\n:trophy: Сongratulations to player **${Object.keys(req.body)[0]}** on the victory!\n`;
     let pos = 1;
 
     for (const [key, value] of Object.entries(req.body)) {

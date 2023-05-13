@@ -1,4 +1,4 @@
-const pointsSystem = { 1:12, 2:9, 3:7, 4:5, 5:3, 6:2, 7:1, 8:0 };
+let pointsSystem = { 1:12, 2:9, 3:7, 4:5, 5:3, 6:2, 7:1, 8:0 };
 
 
 const registRacersBlock = document.querySelector('.regist-racer');
@@ -6,11 +6,48 @@ const addRacer = document.querySelector('.regist-racer__form input[type=submit]'
 const registeredListBlock = document.querySelector('.regist-racer__list');
 const pushRegist = document.querySelector('#push-regist-btn');
 
+const pointsSystemBlockInputs = document.querySelector('.regist-racer__points-system_inputs');
+const savePointsSystem = document.querySelector('#save-points-system-btn');
+
 const startTournament = document.querySelector('#start-tournament-btn');
 const tournamentBlock = document.querySelector('.tournament_block');
 
 
-// registeredListBlock.innerHTML = '';
+// let ps = {...pointsSystem};
+
+for (const [key, value] of Object.entries(pointsSystem)) {
+    pointsSystemBlockInputs.innerHTML += `
+    <div>
+        <span>${key}:</span>
+        <input type="text" name=${key} value=${value} oninput=inputPoint(this)>
+    </div>`
+}
+
+function inputPoint(input) {
+    pointsSystem[input.name] = +input.value;
+}
+
+if (localStorage.PointsSystem) {
+    pointsSystem = JSON.parse(localStorage.PointsSystem);
+
+    pointsSystemBlockInputs.innerHTML = '';
+    for (const [key, value] of Object.entries(pointsSystem)) {
+        pointsSystemBlockInputs.innerHTML += `
+        <div>
+            <span>${key}:</span>
+            <input type="text" name=${key} value=${value} oninput=inputPoint(this)>
+        </div>`
+    }
+}
+
+savePointsSystem.onclick = () => {
+    localStorage.PointsSystem = JSON.stringify(pointsSystem);
+    pointsSystemBlockInputs.parentElement.style.background = 'rgba(0,0,0,.155)';
+    setTimeout(() => {
+        pointsSystemBlockInputs.parentElement.style.background = 'rgba(0,0,0,.1)';
+    }, 200)
+}
+
 
 let registeredRacersTime = {};
 let registeredRacers = [];
