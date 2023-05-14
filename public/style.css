@@ -1,86 +1,101 @@
 body {
-    /*background: #36393f;*/
-    /*font-family: NFSWSubHeadline, Arial;*/
     font-family: Arial;
 }
 
-@font-face {
-    font-family: "NFSWSubHeadline";
-    src: url("NFSWSubHeadline.woff2") format("woff2");
-}
-
-#start-registration {
-    /*background: red;*/
-    /*padding: 3px;*/
-    position: absolute;
-    /*display: none;*/
-}
-
-#push-regist-btn {
-    font-size: 16px;
-    margin: 0 auto;
-    margin-top: 20px;
-    display: block;
-
-}
 
 #start-tournament-btn {
-    font-size: 16px;
+    font-size: 15px;
+    padding: 5px;
     margin: 0 auto;
-    margin-top: 20px;
-    display: block;
-
 }
 
-.regist-racer {
+#finish-tournament-btn {
+    margin: 0 auto;
+    margin-top: 10px;
+    display: block;
+}
+
+.push {
+    background-image: url(images/discord-logo.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: right;
+    padding: 5px;
+    padding-right: 30px;
+    font-size: 14px;
+}
+
+.settings {
     border-radius: 3px;
     padding: 20px;
-    font-size: 20px;
-    background: red;
     background: rgba(0,0,0,.1);
-    display: inline-block;
-    /*width: 300px;*/
     position: absolute;
-    top: 20vh;
-    /*bottom: 50%;*/
-    left: 50%;
-    /*right: 50%;*/
-    transform: translateX(-50%);
+    top: 4vh;
+    right: 50%;
+    gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    transform: translateX(50%);
+    width: 60vw;
 
 }
+.settings__list_block {
+    border-radius: 3px;
+    gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
 
-.regist-racer__form {
+.settings__wellcome {
+    background: red;
+    background: rgba(0,0,0,.1);
+    font-size: 16px;
+    padding: 10px;
+    min-width: 300px;
+}
+.settings__wellcome textarea {
+    width: 93%;
+    padding: 10px;
+}
+
+.settings__regist_players {
+    background: rgba(0,0,0,.1);
+    padding: 10px;
+}
+
+.settings__regist_players_form {
     /*background: gold;*/
     background: rgba(0,0,0,.1);
     display: flex;
+    justify-content: space-between;
     /*gap: 5px;*/
-    margin-top: 10px;
+    margin-top: 3px;
 
 }
 
-.regist-racer__form input {
+.settings__regist_players_form input {
     font-size: 15px;
     padding: 3px;
     margin: 5px;
 }
-.regist-racer__form input[name=time] {
+.settings__regist_players_form input[name=time] {
     width: 90px;
 }
 
-.regist-racer__form input[type=submit] {
+.settings__regist_players_form input[type=submit] {
     min-width: 30px;
 }
 
-.regist-racer__list {
-    margin-top: 20px;
-    /*background: gold;*/
+.settings__regist_players_list {
+    margin: 10px;
     font-size: 15px;
     font-style: italic;
     font-weight: bold;
 
 }
 
-.registered_racer {
+.registered_players {
     /*background: green;*/
     background: rgba(0,0,0,.1);
 
@@ -91,88 +106,90 @@ body {
     justify-content: space-between;
 }
 
-.registered_racer-nickname {
+.registered_players-nickname {
     flex-grow: 1;
 }
-.registered_racer-time {
+.registered_players-time {
     margin: 0 10px 0 10px;
 }
 
-.regist-racer__points-system {
+.settings__tracks_block {
+    background: red;
     background: rgba(0,0,0,.1);
-    text-align: center;
     font-size: 16px;
-    margin: 10px;
+    padding: 10px;
+    min-width: 300px;
+}
+.settings__tracks_block textarea {
+    width: 93%;
     padding: 10px;
 }
 
-.regist-racer__points-system * {
-    margin: 3px;
+
+.settings__points-system {
+    background: rgba(0,0,0,.1);
+    padding: 10px;
 }
 
-.regist-racer__points-system_inputs {
+
+.settings__points-system_inputs {
     display: flex;
     justify-content: center;
-    align-items: center;
-}
+    text-align: center;
+    margin-bottom: 5px;
 
-.regist-racer__points-system_inputs div {
-    background: rgba(0,0,0,.1);
-    padding: 2px;
+}
+.settings__points-system_inputs * {
     margin: 2px;
 }
 
-.regist-racer__points-system_inputs span {
+.settings__points-system_inputs div {
+    background: rgba(0,0,0,.1);
+    display: flex;
+    flex-direction: column;
+    padding: 2px;
+}
+
+.settings__points-system_inputs span {
     font-size: 15px;
 }
-.regist-racer__points-system_inputs input {
+.settings__points-system_inputs input {
     font-size: 15px;
     width: 20px;
     text-align: center;
 }
 
-.regist-racer__points-system input[name=points-system] {
+.settings__points-system input[name=points-system] {
     font-size: 15px;
     padding: 3px;
     width: 100%;
 }
 
-.tournament_block {
-    background: red;
-    background: rgba(0,0,0,.1);
+
+/********Tournament Block*****************/
+
+.tournament {
+    border-radius: 3px;
     padding: 20px;
+    background: rgba(0,0,0,.1);
     position: absolute;
-    top: 60px;
-    left: 50%;
+    top: 4vh;
     right: 50%;
-    transform: translateX(-50%);
-    width: 80vw;
-    display: block;
-
-}
-.control {
-    /*background: gold;*/
-
-}
-#finish-tournament {
-    background: rgba(255,50,50,.8);
-    /*min-width: 200px;*/
-    /*margin: 20px;*/
+    transform: translateX(50%);
+    width: 60vw;
 
 }
 
-.tournament_wrapper {
-    gap: 10vw;
-    width: 100%;
+.tournament__list_block {
+    border-radius: 3px;
+    gap: 10px;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    /*background: green;*/
 
 }
 
-
-
-.count {
+.tournament__count {
     border-radius: 3px;
     padding: 10px;
     background: coral;
@@ -181,80 +198,66 @@ body {
 
 }
 
-.count__selector {
-    /*background: gold;*/
+.tournament__count_selector {
     padding: 3px;
 
 }
-.count__selector_form_racer {
-    /*background: blue;*/
+.tournament__count_selector_form {
+    margin-bottom: 6px;
+}
+.tournament__count_selector_form_player {
+/*    background: blue;*/
     border: 1px solid white;
     display: flex;
     margin: 1px 0 1px 0;
 }
-.count__selector_form_racer * {
+.tournament__count_selector_form_player * {
     font-size: 15px;
     padding: 3px;
     font-weight: bold;
 }
-.count__selector_form_racer select {
+.tournament__count_selector_form_player select {
     font-weight: bold;
     min-width: 140px
 }
-.count__selector_form_racer option {
+.tournament__count_selector_form_player option {
     font-weight: normal;
 }
 
-.count__selector_form_racer b {
+.tournament__count_selector_form_player b {
     /*background: red;*/
     min-width: 20px;
     font-family: Arial;
     text-align: center;
 }
 
-.count__selector_form_racer input[type=number] {
-    /*background: red;*/
+.tournament__count_selector_form_player input[type=number] {
+/*    background: red;*/
     width: 40px;
 }
 
-.count__btn_block {
-    margin: 0 auto;
-    /*background: red;*/
-    margin-top: 10px;
-    display: flex;
-    /*justify-content: center;*/
-}
-
-.leaderboard {
+.tournament__leaderboard {
     border-radius: 3px;
     padding: 10px;
     font-size: 16px;
     background: rgba(0,0,0,.1);
-    display: inline-block;
+
+}
+.tournament__leaderboard_track-info {
+    font-size: 16px;
+    padding: 5px;
+    background: rgba(0,0,0,.1);
+    margin: 10px 0 10px 0;
+}
+
+.tournament__leaderboard_list {
     font-weight: bold;
-
-}
-.leaderboard__race-number {
-    font-size: 18px;
-}
-.leaderboard__header {
-    /*background: red;*/
-    text-align: center;
-    font-size: 14px;
+    margin-bottom: 10px;
 }
 
-.leaderboard__list {
-    /*background: gold;*/
-    /*display: flex;*/
-    /*gap: 5px;*/
-    margin-top: 10px;
-
-}
-
-.leaderboard__list_racer {
-    /*background: coral;*/
-    margin: 1px 0 1px 0;
-    /*padding: 3px;*/
+.tournament__leaderboard_list_player {
+    margin: 2px 0 2px 0;
+    padding: 1px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -262,27 +265,19 @@ body {
 
 }
 
-.leaderboard__list_racer-nickname {
+.tournament__leaderboard_list_player-nickname {
     flex-grow: 1;
     min-width: 200px;
-    /*background: red;*/
-
     padding: 3px;
 
 }
 
-.leaderboard__list_racer-position {
+.tournament__leaderboard_list_player-position {
     min-width: 30px;
     text-align: center;
 }
 
-.leaderboard__list_racer-points {
+.tournament__leaderboard_list_player-points {
     min-width: 40px;
     text-align: center;
-}
-
-
-.control {
-    display: flex;
-    justify-content: space-around;
 }

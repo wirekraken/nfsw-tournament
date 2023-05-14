@@ -8,54 +8,67 @@
     <!-- <script type="text/javascript" src="registed.json"></script> -->
 </head>
 <body>
-    <div class="regist-racer">
-        <div>Registration racers</div>
-        <form class="regist-racer__form">
-            <input oninput="this.value=this.value.toUpperCase()" type="text" name="nickname" placeholder="Nickname">
-            <input type="text" name="time" placeholder="Time">
-            <input type="submit" value="+"><br>
-        </form>
-        <div class="regist-racer__list"></div>
-        <button id="push-regist-btn">Push registration</button>
-        <div class="regist-racer__points-system">
-            <div>Points system</div>
-            <div class="regist-racer__points-system_inputs"></div>
-            <button id="save-points-system-btn">Save</button>
-        </div>
-        <button id="start-tournament-btn">Start tournament</button>
-    </div>
-
-    <div class="tournament_block" style="display:none">
-        <div class="tournament_wrapper">
-           <div class="count">
-                <div class="count__selector">
-                    <form class="count__selector_form">
-                        <div class="count__selector_form_racer"><b>1</b><select st='1'></select><input type="number"></div>
-                        <div class="count__selector_form_racer"><b>2</b><select st='2'></select><input type="number"></div>
-                        <div class="count__selector_form_racer"><b>3</b><select st='3'></select><input type="number"></div>
-                        <div class="count__selector_form_racer"><b>4</b><select st='4'></select><input type="number"></div>
-                        <div class="count__selector_form_racer"><b>5</b><select st='5'></select><input type="number"></div>
-                        <div class="count__selector_form_racer"><b>6</b><select st='6'></select><input type="number"></div>
-                        <div class="count__selector_form_racer"><b>7</b><select st='7'></select><input type="number"></div>
-                        <div class="count__selector_form_racer"><b>8</b><select st='8'></select><input type="number"></div>
-                        <dir class="count__btn_block">
-                            <button id="save-leaderboard">Save</button>
-                        </dir>
-                    </form>
-                </div>
+    <div class="settings">
+        <div class="settings__list_block">
+            <div class="settings__wellcome">
+                <div>Wellcome</div>
+                <textarea rows="6" placeholder="Wellcome text"></textarea><br>
+                <button class="push" id="push-wellcome-btn">Push wellcome</button>
+            </div>
+            <div class="settings__regist_players">
+                <div>Registration players</div>
+                <form class="settings__regist_players_form">
+                    <input oninput="this.value=this.value.toUpperCase()" type="text" name="nickname" placeholder="Nickname">
+                    <input type="text" name="time" placeholder="Time">
+                    <input type="submit" value="+"><br>
+                </form>
+                <div class="settings__regist_players_list"></div>
+                <button class="push" id="push-regist-btn">Push registration</button>
             </div>
 
-            <div class="leaderboard">
-                <div class="leaderboard__race-number">Race #1</div>
-                <div class="leaderboard__header">LEADERBOARD</div>
-                <div class="leaderboard__list"></div>
+            <div class="settings__tracks_block">
+                <div>Tracks</div>
+                <textarea rows="6" placeholder="Tracks (by line break)"></textarea><br>
+                <button id="save-tracks-btn">Save</button>
+            </div>
+            <div class="settings__points-system">
+                <div>Points system</div>
+                <div class="settings__points-system_inputs"></div>
+                <button id="save-points-system-btn">Save</button>
             </div> 
         </div>
 
-        <dir class="control">
-            <button id='finish-tournament'>Finish tournament</button>
-            <button id='push-leaderboard'>Push leaderboard</button>
-        </dir>
+        <button id="start-tournament-btn">Start tournament</button>
+    </div>
+
+    <div class="tournament" style="display:none">
+        <div class="tournament__list_block">
+           <div class="tournament__count">
+                <div>Сounting of points</div>
+                <div class="tournament__count_selector">
+                    <form class="tournament__count_selector_form">
+                        <div class="tournament__count_selector_form_player"><b>1</b><select st='1'></select><input type="number"></div>
+                        <div class="tournament__count_selector_form_player"><b>2</b><select st='2'></select><input type="number"></div>
+                        <div class="tournament__count_selector_form_player"><b>3</b><select st='3'></select><input type="number"></div>
+                        <div class="tournament__count_selector_form_player"><b>4</b><select st='4'></select><input type="number"></div>
+                        <div class="tournament__count_selector_form_player"><b>5</b><select st='5'></select><input type="number"></div>
+                        <div class="tournament__count_selector_form_player"><b>6</b><select st='6'></select><input type="number"></div>
+                        <div class="tournament__count_selector_form_player"><b>7</b><select st='7'></select><input type="number"></div>
+                        <div class="tournament__count_selector_form_player"><b>8</b><select st='8'></select><input type="number"></div>
+                    </form>
+                    <button id="save-leaderboard-btn">Save</button>
+                </div>
+            </div>
+
+            <div class="tournament__leaderboard">
+                <div>Leaderboard</div>
+                <div class="tournament__leaderboard_track-info"></div>
+                <div class="tournament__leaderboard_list"></div>
+                <button class="push" id='push-leaderboard-bth'>Push leaderboard</button>
+            </div> 
+        </div>
+
+        <button class="push" id='finish-tournament-btn'>Finish tournament</button>
     </div>
 
     <script type="text/javascript" src="event.js"></script>

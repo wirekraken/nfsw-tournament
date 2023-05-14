@@ -1,100 +1,184 @@
 let pointsSystem = { 1:12, 2:9, 3:7, 4:5, 5:3, 6:2, 7:1, 8:0 };
 
 
-const registRacersBlock = document.querySelector('.regist-racer');
-const addRacer = document.querySelector('.regist-racer__form input[type=submit]');
-const registeredListBlock = document.querySelector('.regist-racer__list');
+const settingsBlock = document.querySelector('.settings');
+const tournamentBlock = document.querySelector('.tournament');
+
+const wellcomeArea = document.querySelector('.settings__wellcome textarea');
+const pushWellcome = document.querySelector('#push-wellcome-btn');
+
+const addPlayer = document.querySelector('.settings__regist_players_form input[type=submit]');
+const registeredListBlock = document.querySelector('.settings__regist_players_list');
 const pushRegist = document.querySelector('#push-regist-btn');
 
-const pointsSystemBlockInputs = document.querySelector('.regist-racer__points-system_inputs');
+const tracksBlock = document.querySelector('.settings__tracks_block');
+const tracksArea = document.querySelector('.settings__tracks_block textarea');
+const saveTracks = document.querySelector('#save-tracks-btn');
+
+const pointsSystemBlockInputs = document.querySelector('.settings__points-system_inputs');
 const savePointsSystem = document.querySelector('#save-points-system-btn');
 
 const startTournament = document.querySelector('#start-tournament-btn');
-const tournamentBlock = document.querySelector('.tournament_block');
+
+// localStorage.Tracks = tracksArea.value.split('\n');
+
+(function wellcomeHandler() {
+    // if (wellcomeArea.value.length < 10) pushWellcome.disabled = true;
+    // else pushWellcome.disabled = false;
+
+    wellcomeArea.value = `:trophy: **Стартует новый турнир!**\n:trophy: **A new tournament is starting!**`
+
+    wellcomeArea.oninput = function() {
+        // at least 10 characters
+        if (this.value.length < 10) pushWellcome.disabled = true;
+        else pushWellcome.disabled = false;
+    }
+
+    pushWellcome.onclick = () => {
+        // pupopStatus(true, 'Wellcome pushed');
+
+        if (!wellcomeArea.value) return;
+
+        fetch('http://localhost:5000/api/wellcome', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({Header: 'hello', Body: wellcomeArea.value })
+        })
+        .then(res => {
+            console.log(res.status);
+            if (res.status === 200){
+                pupopStatus(true, 'Wellcome pushed!')
+            } 
+            else {
+                pupopStatus(false, 'Error push!');
+            }
+        });
+    }
+})();
+
+(function tracksHandler() {
+    tracksArea.value = 'Kempton Docks\nIronhorse & Coast\nValley & State\nSouth Fortuna Circuit\nSeaside Interchange';
+
+    if (localStorage.Tracks) {
+        const arr = localStorage.Tracks.split(',');
+        tracksArea.value = '';
+        for (let i = 0; i < arr.length; i++) {
+            // if (arr[i] === '') continue;
+            tracksArea.value += arr[i]+'\n';
+        }
+    }
+
+    saveTracks.onclick = () => {
+        const arr = tracksArea.value.split('\n').filter(e => e !== '');
+        localStorage.Tracks = arr;
+        if (arr.length >= 2) {
+            startTournament.disabled = false;
+        }
+        else {
+            startTournament.disabled = true;
+        }
+        pupopStatus(true, 'Tracks saved!');
+        tracksBlock.style.background = 'rgba(0,0,0,.155)';
+        setTimeout(() => {
+            tracksBlock.style.background = 'rgba(0,0,0,.1)';
+        }, 200)
+    }
+})();
 
 
-// let ps = {...pointsSystem};
+(function pointsSystemHandler() {
 
-for (const [key, value] of Object.entries(pointsSystem)) {
-    pointsSystemBlockInputs.innerHTML += `
-    <div>
-        <span>${key}:</span>
-        <input type="text" name=${key} value=${value} oninput=inputPoint(this)>
-    </div>`
-}
-
-function inputPoint(input) {
-    pointsSystem[input.name] = +input.value;
-}
-
-if (localStorage.PointsSystem) {
-    pointsSystem = JSON.parse(localStorage.PointsSystem);
-
-    pointsSystemBlockInputs.innerHTML = '';
     for (const [key, value] of Object.entries(pointsSystem)) {
         pointsSystemBlockInputs.innerHTML += `
         <div>
             <span>${key}:</span>
-            <input type="text" name=${key} value=${value} oninput=inputPoint(this)>
+            <input type="text" name=${key} value=${value} oninput="pointsSystem[this.name] = +this.value">
         </div>`
     }
-}
 
-savePointsSystem.onclick = () => {
-    localStorage.PointsSystem = JSON.stringify(pointsSystem);
-    pointsSystemBlockInputs.parentElement.style.background = 'rgba(0,0,0,.155)';
-    setTimeout(() => {
-        pointsSystemBlockInputs.parentElement.style.background = 'rgba(0,0,0,.1)';
-    }, 200)
-}
+    if (localStorage.PointsSystem) {
+        pointsSystem = JSON.parse(localStorage.PointsSystem);
+
+        pointsSystemBlockInputs.innerHTML = '';
+        for (const [key, value] of Object.entries(pointsSystem)) {
+            pointsSystemBlockInputs.innerHTML += `
+            <div>
+                <span>${key}:</span>
+                <input type="text" name=${key} value=${value} oninput="pointsSystem[this.name] = +this.value">
+            </div>`
+        }
+    }
+
+    savePointsSystem.onclick = () => {
+        localStorage.PointsSystem = JSON.stringify(pointsSystem);
+        pupopStatus(true, 'Points system saved!');
+        pointsSystemBlockInputs.parentElement.style.background = 'rgba(0,0,0,.155)';
+        setTimeout(() => {
+            pointsSystemBlockInputs.parentElement.style.background = 'rgba(0,0,0,.1)';
+        }, 200)
+    }
+})();
 
 
-let registeredRacersTime = {};
-let registeredRacers = [];
+let registeredPlayersTime = {};
+let registeredPlayers = [];
 
-addRacer.onclick = (e) => {
+addPlayer.onclick = (e) => {
     e.preventDefault();
 
-    const newRacerNickname = document.querySelector('.regist-racer__form input[name=nickname]');
-    const newRacerTime = document.querySelector('.regist-racer__form input[name=time]');
+    const newRacerNickname = document.querySelector('.settings__regist_players_form input[name=nickname]');
+    const newRacerTime = document.querySelector('.settings__regist_players_form input[name=time]');
 
     if (!newRacerNickname.value) return;
 
-    // registeredRacers.push(newRacerNickname.value);
+    // registeredPlayers.push(newRacerNickname.value);
 
     // registeredListBlock.innerHTML += `
-    // <div class="registered_racer">
-    //     <span class="registered_racer-nickname">${ newRacerNickname.value }</span>
-    //     <span class="registered_racer-time">${ newRacerTime.value }</span>
+    // <div class="registered_players">
+    //     <span class="registered_players-nickname">${ newRacerNickname.value }</span>
+    //     <span class="registered_players-time">${ newRacerTime.value }</span>
     //     <input type="button" value="-" onclick="removeRacer(this)">
     // </div>`;
 
-    // console.log(registeredRacers)
+    // console.log(registeredPlayers)
     
-    if (localStorage.RegisteredRacersTime) {
-        registeredRacersTime = JSON.parse(localStorage.RegisteredRacersTime);
+    if (localStorage.RegisteredPlayersTime) {
+        registeredPlayersTime = JSON.parse(localStorage.RegisteredPlayersTime);
     }
 
-    registeredRacersTime[newRacerNickname.value] = newRacerTime.value;
+    registeredPlayersTime[newRacerNickname.value] = newRacerTime.value;
 
-    registeredRacersTime = sortReverse(registeredRacersTime);
+    registeredPlayersTime = sortReverse(registeredPlayersTime);
 
-    localStorage.RegisteredRacersTime = JSON.stringify(registeredRacersTime);
+    localStorage.RegisteredPlayersTime = JSON.stringify(registeredPlayersTime);
 
     registeredListBlock.innerHTML = '';
 
-    for (const [key, value] of Object.entries(registeredRacersTime)) {
+    for (const [key, value] of Object.entries(registeredPlayersTime)) {
         registeredListBlock.innerHTML += `
-            <div class="registered_racer">
-                <span class="registered_racer-nickname">${ key }</span>
-                <span class="registered_racer-time">${ value }</span>
+            <div class="registered_players">
+                <span class="registered_players-nickname">${ key }</span>
+                <span class="registered_players-time">${ value }</span>
                 <input type="button" value="-" onclick="removeRacer(this)">
             </div>`;
     }
 
     newRacerNickname.value = '';
+    pupopStatus(true, 'Registration saved!');
 
-    registeredRacers = Object.keys(registeredRacersTime);
+    registeredPlayers = Object.keys(registeredPlayersTime);
+
+    if (registeredPlayers.length >= 2) {
+        pushRegist.disabled = false;
+
+        if (localStorage.Tracks) {
+            if (localStorage.Tracks.split(',').length >= 2) {
+                startTournament.disabled = false;
+            }
+        }
+    }
 
     function sortReverse(racers) {
         const sortedObj = {};
@@ -112,71 +196,121 @@ addRacer.onclick = (e) => {
 }
 
 function removeRacer(thisElem) {
-    const nickname = thisElem.parentElement.querySelector('.registered_racer-nickname').innerText;
+    const nickname = thisElem.parentElement.querySelector('.registered_players-nickname').innerText;
     thisElem.parentElement.remove();
 
-    // localStorage.RegisteredRacers = Object.keys(registeredRacersTime).filter(e => e !== nickname);
+    // localStorage.RegisteredPlayers = Object.keys(registeredPlayersTime).filter(e => e !== nickname);
 
-    const newObj = JSON.parse(localStorage.RegisteredRacersTime);
+    const newObj = JSON.parse(localStorage.RegisteredPlayersTime);
     delete newObj[nickname];
+    registeredPlayers = Object.keys(newObj);
+    localStorage.RegisteredPlayersTime = JSON.stringify(newObj);
+    delete registeredPlayersTime[nickname];
 
-    registeredRacers = Object.keys(newObj);
+    pupopStatus(true, 'Registration saved!');
 
-    localStorage.RegisteredRacersTime = JSON.stringify(newObj);
-
-    delete registeredRacersTime[nickname];
+    if (registeredPlayers.length < 2) {
+        pushRegist.disabled = true;
+        startTournament.disabled = true;
+    }
 }
 
+startTournament.disabled = true;
 
+if (localStorage.RegisteredPlayersTime) {
+    if (Object.keys(JSON.parse(localStorage.RegisteredPlayersTime)).length < 2) {
+        pushRegist.disabled = true;
+        startTournament.disabled = true;
+    }
+    else {
+        pushRegist.disabled = false;
+        if (localStorage.Tracks) {
+            if (localStorage.Tracks.split(',').length > 2) {
+                startTournament.disabled = false;
+            }
+        }
+    }
+}
+else {
+    pushRegist.disabled = true;
+    startTournament.disabled = true;
+}
 
 pushRegist.onclick = () => {
-    if (registeredRacers.length < 2) return;
+    if (registeredPlayers.length < 2) return;
 
     fetch('http://localhost:5000/api/regist', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: localStorage.RegisteredRacersTime
+        body: localStorage.RegisteredPlayersTime
     })
-    .then(res => console.log(res.status));
+    .then(res => {
+        console.log(res.status)
+        if (res.status === 200) {
+            pupopStatus(true, 'Registration pushed!');
+        } else {
+            pupopStatus(false, 'Error push!');
+        }
+    });
+
 }
 
 startTournament.onclick = () => {
-    if (registeredRacers.length < 2) return;
+    if (registeredPlayers.length < 2) return;
 
     const confirm = window.confirm('Registration will be terminated. Continue?');
 
     if (confirm) {
-        tournament(registeredRacers);
+        tournament(registeredPlayers);
 
         tournamentBlock.style.display = 'block';
-        registRacersBlock.style.display = 'none';
+        settingsBlock.style.display = 'none';
     }
 
 }
 
-if (localStorage.RegisteredRacersTime) {
-    registeredRacers = Object.keys(JSON.parse(localStorage.RegisteredRacersTime));
+if (localStorage.RegisteredPlayersTime) {
+    registeredPlayers = Object.keys(JSON.parse(localStorage.RegisteredPlayersTime));
 
-    for (const [key, value] of Object.entries(JSON.parse(localStorage.RegisteredRacersTime))) {
+    for (const [key, value] of Object.entries(JSON.parse(localStorage.RegisteredPlayersTime))) {
         registeredListBlock.innerHTML += `
-            <div class="registered_racer">
-                <span class="registered_racer-nickname">${ key }</span>
-                <span class="registered_racer-time">${ value }</span>
+            <div class="registered_players">
+                <span class="registered_players-nickname">${ key }</span>
+                <span class="registered_players-time">${ value }</span>
                 <input type="button" value="-" onclick="removeRacer(this)">
             </div>`;
     }
 }
 
-if (localStorage.RegisteredRacersPoint) {
+if (localStorage.RegisteredPlayersPoint) {
 
     tournamentBlock.style.display = 'block';
-    registRacersBlock.style.display = 'none';
+    settingsBlock.style.display = 'none';
 
-    tournament(registeredRacers);
+    tournament(registeredPlayers);
 
-    updateLeaderboard(JSON.parse(localStorage.RegisteredRacersPoint));
+    updateLeaderboard(JSON.parse(localStorage.RegisteredPlayersPoint));
 }
 
 
+function pupopStatus(status, statusText) {
+    const color = (status) ? 'rgba(50,255,50,.8)' : 'rgba(255,50,50,.8)';
+    // const statusText = (status) ? 'Pushed!' : 'Error push!';
+    const styles = `
+        padding: 10px;
+        font-size: 16px;
+        background: ${color};
+        position: fixed;
+        border-radius: 3px;
+        right: 10px;
+        top: 10px;
+    `;
+    const div = document.createElement('div');
+    div.innerHTML = `<span style="${styles}">${statusText}</span>`;
+    document.body.appendChild(div);
+    setTimeout(() => {
+        document.body.removeChild(div);
+    }, 1000)
+}
