@@ -4,16 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tournament admin</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <!-- <script type="text/javascript" src="registed.json"></script> -->
+    <link rel="stylesheet" type="text/css" href="styles/main.css">
 </head>
 <body>
     <div class="settings">
         <div class="settings__list_block">
-            <div class="settings__wellcome">
-                <div>Wellcome</div>
-                <textarea rows="6" placeholder="Wellcome text"></textarea><br>
-                <button class="push" id="push-wellcome-btn">Push wellcome</button>
+            <div class="settings__welcome">
+                <div>Welcome</div>
+                <textarea rows="6" placeholder="Welcome text"></textarea><br>
+                <button class="push" id="push-welcome-btn">Push wellcome</button>
             </div>
             <div class="settings__regist_players">
                 <div>Registration players</div>
@@ -70,9 +69,6 @@
 
         <button class="push" id='finish-tournament-btn'>Finish tournament</button>
     </div>
-
-    <script type="text/javascript" src="event.js"></script>
-    <script type="text/javascript" src="regist.js"></script>
-
+    <script type="module" src="/main.js"></script>
 </body>
 </html>

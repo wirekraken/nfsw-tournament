@@ -1,0 +1,112 @@
+.tournament {
+    border-radius: 3px;
+    padding: 20px;
+    background: rgba(0,0,0,.1);
+    position: absolute;
+    top: 4vh;
+    right: 50%;
+    transform: translateX(50%);
+    width: 60vw;
+}
+
+.tournament__list_block {
+    border-radius: 3px;
+    gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.tournament__count {
+    border-radius: 3px;
+    padding: 10px;
+    background: coral;
+    display: inline-block;
+    background: rgba(0,0,0,.1);
+}
+
+.tournament__count_selector {
+    padding: 3px;
+
+}
+
+.tournament__count_selector_form {
+    margin-bottom: 6px;
+}
+
+.tournament__count_selector_form_player {
+    border: 1px solid white;
+    display: flex;
+    margin: 1px 0 1px 0;
+}
+
+.tournament__count_selector_form_player * {
+    font-size: 15px;
+    padding: 3px;
+    font-weight: bold;
+}
+
+.tournament__count_selector_form_player select {
+    font-weight: bold;
+    min-width: 140px
+}
+
+.tournament__count_selector_form_player option {
+    font-weight: normal;
+}
+
+.tournament__count_selector_form_player b {
+    min-width: 20px;
+    font-family: Arial;
+    text-align: center;
+}
+
+.tournament__count_selector_form_player input[type=number] {
+    width: 40px;
+}
+
+.tournament__leaderboard {
+    border-radius: 3px;
+    padding: 10px;
+    font-size: 16px;
+    background: rgba(0,0,0,.1);
+
+}
+
+.tournament__leaderboard_track-info {
+    font-size: 16px;
+    padding: 5px;
+    background: rgba(0,0,0,.1);
+    margin: 10px 0 10px 0;
+}
+
+.tournament__leaderboard_list {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.tournament__leaderboard_list_player {
+    margin: 2px 0 2px 0;
+    padding: 1px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0,0,0,.1);
+}
+
+.tournament__leaderboard_list_player-nickname {
+    flex-grow: 1;
+    min-width: 200px;
+    padding: 3px;
+
+}
+
+.tournament__leaderboard_list_player-position {
+    min-width: 30px;
+    text-align: center;
+}
+
+.tournament__leaderboard_list_player-points {
+    min-width: 40px;
+    text-align: center;
+}

@@ -1,0 +1,111 @@
+import { UI } from './init.js';
+import { updateLeaderboard } from './leaderboard.js';
+import { pointsSystem } from './points.js';
+
+
+let registeredPlayers = [];
+
+
+function startTournament(players) {
+    registeredPlayers = players;
+
+    const currentEventPlayers = {};
+
+    for (const nickname of registeredPlayers) currentEventPlayers[nickname] = 0;
+
+    updateLeaderboard(currentEventPlayers);
+
+    for (const selectElem of UI.tournament.counts.selectElems) {
+        const inputElem = selectElem.parentNode.querySelector('input[type=number]');
+        let options = `<option>...</option>`;
+
+        for (const nickname of registeredPlayers) {
+            options += `<option>${ nickname }</option>`;
+        }
+
+        selectElem.innerHTML = options;
+
+        let points = pointsSystem[selectElem.getAttribute('st')];
+        inputElem.value = points;
+
+        inputElem.oninput = function() {
+            points = +this.value;
+            currentEventPlayers[selectElem.value] = points;
+        }
+
+
+        selectElem.onchange = function () {
+            for (const select of UI.tournament.counts.selectElems) {
+                for (const option of select.children) {
+                    if (option.innerText === this.value) {
+                        option.style.display = 'none';
+                    }
+                }
+            }
+
+            currentEventPlayers[this.value] = points;
+        }
+
+    }
+
+
+    UI.tournament.counts.saveBtn.onclick = function (e) {
+        e.preventDefault();
+
+        this.disabled = true;
+        UI.tournament.leaderboard.pushBtn.disabled = false;
+
+        localStorage.lastLeaderboardPushed = '0';
+
+        if (localStorage.TrackNumber) {
+            localStorage.TrackNumber = +localStorage.TrackNumber + 1;
+
+        }
+        else {
+            localStorage.TrackNumber = '';
+        }
+        // fill options after saving
+        for (const selectElem of UI.tournament.counts.selectElems) {
+
+            const inputElem = selectElem.parentNode.querySelector('input[type=number]');
+            inputElem.value = pointsSystem[selectElem.getAttribute('st')];
+
+            let options = `<option>...</option>`;
+
+            for (const nickname of registeredPlayers) {
+                options += `<option>${ nickname }</option>`;
+            }
+
+            selectElem.innerHTML = options;
+        }
+
+        const calculatedPoints = {};
+
+        if (localStorage.RegisteredPlayersPoints) {
+            for (const [nickname, points] of Object.entries(JSON.parse(localStorage.RegisteredPlayersPoints))) {
+                calculatedPoints[nickname] = points + currentEventPlayers[nickname];
+            }
+            localStorage.RegisteredPlayersPoints = JSON.stringify(calculatedPoints);
+            updateLeaderboard(calculatedPoints);
+            localStorage.EventPlayersPoint = JSON.stringify(currentEventPlayers);
+            // reset
+            for (const nickname of Object.keys(currentEventPlayers)) {
+                currentEventPlayers[nickname] = 0;
+            }
+        } 
+        else {
+            localStorage.RegisteredPlayersPoints = JSON.stringify(currentEventPlayers);
+            updateLeaderboard(currentEventPlayers);
+        }
+
+        if (localStorage.TrackNumber) {
+            if (+localStorage.TrackNumber >= localStorage.Tracks.split(',').length) {
+                this.disabled = true;
+            }
+        }
+    }
+
+}
+
+
+export { startTournament };
