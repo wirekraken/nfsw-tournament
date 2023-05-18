@@ -1,16 +1,46 @@
-import { config, UI, showPopup, sort } from './init.js';
+import { config, UI, showPopup, sortByPoints } from './init.js';
 import { registeredPlayers } from './registration.js';
-import { startTournament } from './counts.js';
-import { updateLeaderboard } from './leaderboard.js';
+import startTournament from './counts.js';
+import updateLeaderboard from './leaderboard.js';
+import { updateSettingsUI } from './updateUI.js';
 import './welcome.js';
 import './tracks.js';
 
 
 
+const loadSettings = async () => {
+    const response = await fetch(config.apiURI + '/settings');
+    const jsonData = await response.json();
+
+    if (response.ok && response.status === 200) {
+        return jsonData;
+    }
+
+    throw new Error(`Error, status: ${response.status}`);
+}
+
+
+UI.settings.pullSettingsBtn.onclick = () => {
+    loadSettings()
+    .then(res => {
+        console.log(res);
+        for (const [key, value] of Object.entries(res)) {
+            localStorage[key] = JSON.stringify(value);
+        }
+        updateSettingsUI(res);
+        showPopup(true, 'Up to dated!');
+    })
+    .catch(err => {
+        showPopup(true, 'Error pull!');
+        console.log(err);
+    });
+}
+
+
 UI.startTournamentBtn.onclick = () => {
     if (registeredPlayers.length < 2) return;
 
-    const isConfirm = window.confirm('Registration will be terminated. Continue?');
+    const isConfirm = confirm('Registration will be terminated. Continue?');
 
     if (isConfirm) {
         startTournament(registeredPlayers);
@@ -22,10 +52,14 @@ UI.startTournamentBtn.onclick = () => {
 }
 
 UI.finishTournamentBtn.onclick = () => {
-    const isConfirm = window.confirm('Finish the tournament?');
+    const isConfirm = confirm('Finish the tournament?');
 
     if (isConfirm) {
-        const sortedPlayers = sort(JSON.parse(localStorage.RegisteredPlayersPoints));
+        let sortedPlayers = {};
+
+        if (localStorage.RegisteredPlayersPoints) {
+         sortedPlayers = sortByPoints(JSON.parse(localStorage.RegisteredPlayersPoints));
+        }
 
         fetch(config.apiURI + '/finish', {
             method: 'POST',
@@ -35,7 +69,7 @@ UI.finishTournamentBtn.onclick = () => {
             body: JSON.stringify(sortedPlayers)
         })
         .then(res => {
-            if (res.status === 200) {
+            if (res.ok && res.status === 200) {
 
                 localStorage.clear();
                 updateLeaderboard(false);
@@ -59,7 +93,7 @@ UI.finishTournamentBtn.onclick = () => {
                 console.log(res.status, 'finished');
             }
             else {
-	            showPopup(true , 'Error push!');
+                showPopup(true , 'Error push!');
             }
         })
         .catch(err => {
@@ -70,8 +104,10 @@ UI.finishTournamentBtn.onclick = () => {
 }
 
 
+
+
 if (localStorage.RegisteredPlayersTime) {
-	const registeredPlayers = Object.keys(JSON.parse(localStorage.RegisteredPlayersTime));
+    const registeredPlayers = Object.keys(JSON.parse(localStorage.RegisteredPlayersTime));
 
     if (registeredPlayers.length < 2) {
         UI.settings.regist.pushBtn.disabled = true;

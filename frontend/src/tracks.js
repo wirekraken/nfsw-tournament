@@ -1,20 +1,20 @@
-import { UI, showPopup } from './init.js';
+import { UI, showPopup, pushSettings } from './init.js';
 import { registeredPlayers } from './registration.js'
 
 UI.settings.tracks.textarea.value = 'Kempton Docks\nIronhorse & Coast\nValley & State\nSouth Fortuna CircUIt\nSeaside Interchange';
 
 if (localStorage.Tracks) {
-    const storageTracks = localStorage.Tracks.split(',');
+    const storageTracks = JSON.parse(localStorage.Tracks);
     UI.settings.tracks.textarea.value = '';
 
-    for (let i = 0; i < storageTracks.length; i++) {
-        UI.settings.tracks.textarea.value += storageTracks[i]+'\n';
+    for (const track of storageTracks) {
+        UI.settings.tracks.textarea.value += track + '\n';
     }
 }
 
 UI.settings.tracks.saveBtn.onclick = () => {
     const tracks = UI.settings.tracks.textarea.value.split('\n').filter(e => e !== '');
-    localStorage.Tracks = tracks;
+    localStorage.Tracks = JSON.stringify(tracks);
 
     if (tracks.length >= 2 && registeredPlayers.length >= 2) {
         UI.startTournamentBtn.disabled = false;
@@ -28,5 +28,6 @@ UI.settings.tracks.saveBtn.onclick = () => {
         UI.settings.tracks.block.style.background = 'rgba(0,0,0,.1)';
     }, 200);
 
+    pushSettings('Tracks', tracks);
     showPopup(true, 'Saved!');
 }

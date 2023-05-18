@@ -21,7 +21,7 @@ UI.settings.welcome.pushBtn.onclick = () => {
     })
     .then(res => {
         console.log(res.status);
-        if (res.status === 200){
+        if (res.ok && res.status === 200){
             showPopup(true, 'Welcome pushed!');
         }
         else {

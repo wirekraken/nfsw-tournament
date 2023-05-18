@@ -11,11 +11,37 @@ app.use(express.static('public'));
 app.use(express.json());
 
 
+const readFile = src => {
+    return new Promise((resolve, reject) => {
+        fs.readFile(src, 'utf8', (err, data) => {
+            (!err) ? resolve(data) : reject(data);
+        })
+    })
+}
+
+const updateSettings = async (key, value) => {
+    const settingsJSON = await readFile('./settings.json');
+    const parsed = JSON.parse(settingsJSON);
+    parsed[key] = value;
+    fs.writeFile('./settings.json', JSON.stringify(parsed), (err) => {
+        (err) && console.log(err);
+    })
+}
+
 const embedMessage = new EmbedBuilder();
 
-app.post('/api/regist', (req, res) => {
 
-    const timeAttackIcon = 'https://world-evolved.ru/templates/statistics/images/races/timeattack.png';
+app.get('/api/settings', async (req, res) => {
+    const settingsJSON = await readFile('./settings.json');
+    res.status(200).send(settingsJSON);
+})
+
+app.post('/api/settings', (req, res) => {
+    updateSettings(req.body.key, req.body.value);
+    res.status(200);
+})
+
+app.post('/api/regist', async (req, res) => {
 
     let formatedText = '';
     let position = 1;
@@ -24,9 +50,11 @@ app.post('/api/regist', (req, res) => {
         formatedText += `**${position++}: ${nickname}**  ${points}\n`;
     }
 
+    const timeAttackIconURL = 'https://world-evolved.ru/templates/statistics/images/races/timeattack.png';
+
     embedMessage
         .setColor(0x07b5f5)
-        .setAuthor({ name: 'КВАЛИФИКАЦИЯ. QUALIFICATION', iconURL: timeAttackIcon })
+        .setAuthor({name: 'КВАЛИФИКАЦИЯ. QUALIFICATION', iconURL: timeAttackIconURL})
         .setTitle('Допускаются. Qualified Racers\n')
         .setDescription(formatedText)
         .setTimestamp()
@@ -34,34 +62,38 @@ app.post('/api/regist', (req, res) => {
 
     const tournamentChannel = client.channels.cache.get(channelID);
 
-
-    let regMessageID = '';
+    let regMessageId = '';
 
     // to save the registration message
     try {
-        regMessageID = fs.readFileSync('./message-id', {encoding:'utf8', flag:'r'});
-    } catch(e) {}
+        regMessageId = await readFile('./message-id');
+    } catch (err) {
+        console.log(err);
+    }
 
-    if (!regMessageID) {
+    if (!regMessageId) {
         getMsgId().then(res => {
-            regMessageID = res
-            fs.writeFile('./message-id', regMessageID, err => {
-                if (err) console.log(err);
-                // console.log('saved', regMessageID)
+            regMessageId = res
+            fs.writeFile('./message-id', regMessageId, err => {
+                (err) && console.log(err);
+                // console.log('saved', regMessageId)
             })
         });
     }
     else {
-        tournamentChannel.messages.fetch(regMessageID).then(message => {
+        tournamentChannel.messages.fetch(regMessageId).then(message => {
             message.edit({ embeds: [embedMessage] });
         })
     }
 
     async function getMsgId() {
-        const message = await tournamentChannel.send({ embeds: [embedMessage] });
+        const message = await tournamentChannel.send({embeds: [embedMessage]});
         // console.log(message.id);
         return message.id;
     }
+
+    updateSettings('RegisteredPlayersTime', req.body);
+
 
     res.status(200).send();
 })
@@ -107,6 +139,11 @@ app.post('/api/finish', (req, res) => {
     fs.unlink('./message-id', (err) => {
         res.status(200).send();
     });
+
+    // clear
+    fs.writeFile('./settings.json', JSON.stringify({}), (err) => {
+        (err) && console.log(err);
+    })
 })
 
 

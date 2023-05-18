@@ -1,16 +1,19 @@
 const config = {
-    apiURI: 'http://localhost:5000/api'
+    apiURI: location.href + 'api'
 }
 
 const UI = {
     settings: {
         block: document.querySelector('.settings'),
+        pullSettingsBtn: document.querySelector('#pull-settings-btn'),
 
         welcome: {
             textarea: document.querySelector('.settings__welcome textarea'),
             pushBtn: document.querySelector('#push-welcome-btn')
         },
         regist: {
+            playerNickname: document.querySelector('.settings__regist_players_form input[name=nickname]'),
+            playerTime: document.querySelector('.settings__regist_players_form input[name=time]'),
             addPlayerBtn: document.querySelector('.settings__regist_players_form input[type=submit]'),
             listBlock: document.querySelector('.settings__regist_players_list'),
             pushBtn: document.querySelector('#push-regist-btn'),
@@ -34,6 +37,8 @@ const UI = {
             saveBtn: document.querySelector('#save-leaderboard-btn')
         },
         leaderboard: {
+            trackInfo: document.querySelector('.tournament__leaderboard_track-info'),
+            playersList: document.querySelector('.tournament__leaderboard_list'),
             pushBtn: document.querySelector('#push-leaderboard-bth'),
         }
     },
@@ -61,14 +66,36 @@ const showPopup = (status, statusText) => {
     setTimeout(() => document.body.removeChild(div), ms);
 }
 
-function sort(players) {
+const pushSettings = async (keyName, keyValue) => {
+    await fetch(config.apiURI + '/settings', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({key: keyName, value: keyValue})
+    })
+    .then(res => {
+        if (res.ok && res.status === 200) {
+            showPopup(true , 'Finish pushed!')
+            console.log(res.status, 'finished');
+        }
+        else {
+            showPopup(true , 'Error push!');
+        }
+    })
+    .catch(err => {
+        console.log(err);
+    });
+}
+
+const sortByPoints = (players) => {
     const sorted = {};
-    const sortedByPoints = Object.entries(players).sort((a, b) => b[1] - a[1]);
+    const sortedArray = Object.entries(players).sort((a, b) => b[1] - a[1]);
     
-    for (let i = 0; i < sortedByPoints.length; i++) {
-        sorted[sortedByPoints[i][0]] = sortedByPoints[i][1];
+    for (let i = 0; i < sortedArray.length; i++) {
+        sorted[sortedArray[i][0]] = sortedArray[i][1];
     }
     return sorted;
 }
 
-export { config, UI, showPopup, sort };
+export { config, UI, showPopup, pushSettings, sortByPoints };

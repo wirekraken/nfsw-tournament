@@ -1,5 +1,5 @@
 import { UI } from './init.js';
-import { updateLeaderboard } from './leaderboard.js';
+import updateLeaderboard from './leaderboard.js';
 import { pointsSystem } from './points.js';
 
 
@@ -82,12 +82,15 @@ function startTournament(players) {
         const calculatedPoints = {};
 
         if (localStorage.RegisteredPlayersPoints) {
-            for (const [nickname, points] of Object.entries(JSON.parse(localStorage.RegisteredPlayersPoints))) {
+            const players = JSON.parse(localStorage.RegisteredPlayersPoints);
+
+            for (const [nickname, points] of Object.entries(players)) {
                 calculatedPoints[nickname] = points + currentEventPlayers[nickname];
             }
+
             localStorage.RegisteredPlayersPoints = JSON.stringify(calculatedPoints);
-            updateLeaderboard(calculatedPoints);
             localStorage.EventPlayersPoint = JSON.stringify(currentEventPlayers);
+            updateLeaderboard(calculatedPoints);
             // reset
             for (const nickname of Object.keys(currentEventPlayers)) {
                 currentEventPlayers[nickname] = 0;
@@ -99,7 +102,7 @@ function startTournament(players) {
         }
 
         if (localStorage.TrackNumber) {
-            if (+localStorage.TrackNumber >= localStorage.Tracks.split(',').length) {
+            if (+localStorage.TrackNumber >= JSON.parse(localStorage.Tracks).length) {
                 this.disabled = true;
             }
         }
@@ -108,4 +111,4 @@ function startTournament(players) {
 }
 
 
-export { startTournament };
+export default startTournament;
