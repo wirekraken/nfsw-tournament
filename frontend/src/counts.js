@@ -25,7 +25,8 @@ function startTournament(players) {
 
         selectElem.innerHTML = options;
 
-        let points = pointsSystem[selectElem.getAttribute('st')];
+        // let points = pointsSystem[selectElem.getAttribute('st')];
+        let points = JSON.parse(localStorage.PointsSystem)[selectElem.getAttribute('st')];
         inputElem.value = points;
 
         inputElem.oninput = function() {

@@ -4,6 +4,7 @@ import { client, EmbedBuilder } from './bot.js';
 
 const PORT = 5000;
 const channelID = '1107295531060953209';
+const embedMessage = new EmbedBuilder();
 
 const app = express();
 
@@ -28,8 +29,6 @@ const updateSettings = async (key, value) => {
     })
 }
 
-const embedMessage = new EmbedBuilder();
-
 
 app.get('/api/settings', async (req, res) => {
     const settingsJSON = await readFile('./settings.json');
@@ -51,12 +50,14 @@ app.post('/api/regist', async (req, res) => {
     }
 
     const timeAttackIconURL = 'https://world-evolved.ru/templates/statistics/images/races/timeattack.png';
+    const racingFlagURL = 'https://i.ibb.co/DGgy1sC/flag.png';
 
     embedMessage
-        .setColor(0x07b5f5)
+        .setColor(0x368ad9)
         .setAuthor({name: 'КВАЛИФИКАЦИЯ. QUALIFICATION', iconURL: timeAttackIconURL})
         .setTitle('Допускаются. Qualified Racers\n')
         .setDescription(formatedText)
+        .setThumbnail(racingFlagURL)
         .setTimestamp()
         .setFooter({text: 'Last update'});
 
@@ -76,7 +77,6 @@ app.post('/api/regist', async (req, res) => {
             regMessageId = res
             fs.writeFile('./message-id', regMessageId, err => {
                 (err) && console.log(err);
-                // console.log('saved', regMessageId)
             })
         });
     }
@@ -93,7 +93,6 @@ app.post('/api/regist', async (req, res) => {
     }
 
     updateSettings('RegisteredPlayersTime', req.body);
-
 
     res.status(200).send();
 })
@@ -139,6 +138,12 @@ app.post('/api/finish', (req, res) => {
     fs.unlink('./message-id', (err) => {
         res.status(200).send();
     });
+
+    // const defaultSettings = {
+    //     RegisteredPlayersTime: {},
+    //     Tracks: {},
+    //     PointsSystem: {}
+    // }
 
     // clear
     fs.writeFile('./settings.json', JSON.stringify({}), (err) => {

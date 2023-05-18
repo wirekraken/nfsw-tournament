@@ -31,7 +31,7 @@ UI.settings.pullSettingsBtn.onclick = () => {
         showPopup(true, 'Up to dated!');
     })
     .catch(err => {
-        showPopup(true, 'Error pull!');
+        showPopup(false, 'Error pull!');
         console.log(err);
     });
 }
@@ -93,7 +93,7 @@ UI.finishTournamentBtn.onclick = () => {
                 console.log(res.status, 'finished');
             }
             else {
-                showPopup(true , 'Error push!');
+                showPopup(false , 'Error push!');
             }
         })
         .catch(err => {
@@ -102,7 +102,6 @@ UI.finishTournamentBtn.onclick = () => {
 
     }
 }
-
 
 
 
@@ -116,7 +115,7 @@ if (localStorage.RegisteredPlayersTime) {
     else {
         UI.settings.regist.pushBtn.disabled = false;
         if (localStorage.Tracks) {
-            if (localStorage.Tracks.split(',').length > 2) {
+            if (JSON.parse(localStorage.Tracks).length > 2) {
                 UI.startTournamentBtn.disabled = false;
             }
         }

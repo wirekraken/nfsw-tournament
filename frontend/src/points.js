@@ -8,6 +8,7 @@ if (localStorage.PointsSystem) {
 } 
 else {
     updateInputs(pointsSystem);
+    localStorage.PointsSystem = JSON.stringify(pointsSystem);
 }
 
 function updateInputs(data) {

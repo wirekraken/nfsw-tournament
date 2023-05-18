@@ -11,6 +11,10 @@ if (localStorage.Tracks) {
         UI.settings.tracks.textarea.value += track + '\n';
     }
 }
+else {
+    const tracks = UI.settings.tracks.textarea.value.split('\n');
+    localStorage.Tracks = JSON.stringify(tracks);
+}
 
 UI.settings.tracks.saveBtn.onclick = () => {
     const tracks = UI.settings.tracks.textarea.value.split('\n').filter(e => e !== '');
