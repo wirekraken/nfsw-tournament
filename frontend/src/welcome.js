@@ -1,6 +1,6 @@
 import { config, UI, showPopup } from './init.js';
 
-const defaultText = `:trophy: **Стартует новый турнир!**\n:trophy: **A new tournament is starting!**`;
+const defaultText = `:trophy: **Стартует новый турнир!**\nНиже будет табло турнирных трасс и табло игроков допущенных к турниру.\n:warning: Следите за их состоянием: они будут обновляться до начала турнира!\n:trophy: **A new tournament is starting!**\nThe board of the tournament tracks and the board of the players admitted to the tournament will be shown below.\n:warning: Keep an eye on their status: they will be updated before the start of the tournament! `;
 
 UI.settings.welcome.textarea.value = defaultText;
 

@@ -21,7 +21,7 @@ const UI = {
         tracks: {
             block: document.querySelector('.settings__tracks_block'),
             textarea: document.querySelector('.settings__tracks_block textarea'),
-            saveBtn: document.querySelector('#save-tracks-btn'),
+            pushBtn: document.querySelector('#push-tracks-btn'),
         },
         pointsSystem: {
             inputsBlock: document.querySelector('.settings__points-system_inputs'),
@@ -76,11 +76,11 @@ const pushSettings = async (keyName, keyValue) => {
     })
     .then(res => {
         if (res.ok && res.status === 200) {
-            showPopup(true , 'Finish pushed!')
-            console.log(res.status, 'finished');
+            showPopup(true , 'Saved!')
+            console.log(res.status);
         }
         else {
-            showPopup(true , 'Error push!');
+            showPopup(false , 'Error save!');
         }
     })
     .catch(err => {

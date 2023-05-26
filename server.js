@@ -3,8 +3,8 @@ import fs from 'fs';
 import { client, EmbedBuilder } from './bot.js';
 
 const PORT = 5000;
-const channelID = '1107295531060953209';
-const embedMessage = new EmbedBuilder();
+const channelID = '1107295843746316309';
+
 
 const app = express();
 
@@ -29,6 +29,38 @@ const updateSettings = async (key, value) => {
     })
 }
 
+const updateMessage = async (fileMessageId, messageBody) => {
+    const channel = client.channels.cache.get(channelID);
+
+    const getMsgId = async () => {
+        const message = await channel.send({embeds: [messageBody]});
+        return message.id;
+    }
+
+    let messageId = '';
+
+    try {
+        messageId = await readFile(fileMessageId);
+    } catch (err) {
+        console.log(err);
+    }
+
+    if (!messageId) {
+        getMsgId().then(res => {
+            messageId = res;
+            fs.writeFile(fileMessageId, messageId, err => {
+                (err) && console.log(err);
+            })
+        });
+        return;
+    }
+
+    channel.messages.fetch(messageId).then(message => {
+        message.edit({embeds: [messageBody]});
+    })
+
+}
+
 
 app.get('/api/settings', async (req, res) => {
     const settingsJSON = await readFile('./settings.json');
@@ -37,10 +69,19 @@ app.get('/api/settings', async (req, res) => {
 
 app.post('/api/settings', (req, res) => {
     updateSettings(req.body.key, req.body.value);
-    res.status(200);
+    res.status(200).send('saved');
+})
+
+app.post('/api/welcome', (req, res) => {
+    const channel = client.channels.cache.get(channelID);
+    channel.send(req.body.text);
+
+    res.status(200).send();
 })
 
 app.post('/api/regist', async (req, res) => {
+
+    const embedMessage = new EmbedBuilder();
 
     let formatedText = '';
     let position = 1;
@@ -59,53 +100,49 @@ app.post('/api/regist', async (req, res) => {
         .setDescription(formatedText)
         .setThumbnail(racingFlagURL)
         .setTimestamp()
-        .setFooter({text: 'Last update'});
+        .setFooter({text: 'Последнее обновление. Last update                    • '});
 
-    const tournamentChannel = client.channels.cache.get(channelID);
 
-    let regMessageId = '';
-
-    // to save the registration message
-    try {
-        regMessageId = await readFile('./message-id');
-    } catch (err) {
-        console.log(err);
-    }
-
-    if (!regMessageId) {
-        getMsgId().then(res => {
-            regMessageId = res
-            fs.writeFile('./message-id', regMessageId, err => {
-                (err) && console.log(err);
-            })
-        });
-    }
-    else {
-        tournamentChannel.messages.fetch(regMessageId).then(message => {
-            message.edit({ embeds: [embedMessage] });
-        })
-    }
-
-    async function getMsgId() {
-        const message = await tournamentChannel.send({embeds: [embedMessage]});
-        // console.log(message.id);
-        return message.id;
-    }
-
+    updateMessage('./reg-message-id', embedMessage);
     updateSettings('RegisteredPlayersTime', req.body);
 
     res.status(200).send();
 })
 
-app.post('/api/welcome', (req, res) => {
+app.post('/api/tracks', async (req, res) => {
 
-    const tournamentChannel = client.channels.cache.get(channelID);
-    tournamentChannel.send(req.body.text);
+    const embedMessage = new EmbedBuilder();
+    
+
+    let formatedText = '';
+    let number = 1;
+
+    for (const track of req.body) {
+        formatedText += `**${number++} - ${track}**\n`;
+    }
+
+    const sprintIconURL = 'https://world-evolved.ru/templates/statistics/images/races/sprint.png';
+    const racingFlagURL = 'https://i.ibb.co/DGgy1sC/flag.png';
+
+    embedMessage
+        .setColor(0x368ad9)
+        .setAuthor({name: 'ТРАССЫ. TRACKS', iconURL: sprintIconURL})
+        .setDescription(formatedText)
+        .setThumbnail(racingFlagURL)
+        .setTimestamp()
+        .setFooter({text: 'Последнее обновление. Last update                    • '});
+
+
+    updateMessage('./tracks-message-id', embedMessage);
+    updateSettings('Tracks', req.body);
+
+    console.log(embedMessage)
 
     res.status(200).send();
 })
 
 app.post('/api/event', (req, res) => {
+    const channel = client.channels.cache.get(channelID);
 
     let formatedText = `:checkered_flag: **Турнирный заезд. Tournament race #${req.body.trackNumber}**\n:triangular_flag_on_post: **${req.body.trackName}**\n`;
     let position = 1;
@@ -114,13 +151,14 @@ app.post('/api/event', (req, res) => {
         formatedText += `  **${position++}** - ${nickname} - **${points[0]}** ${points[1]}:small_orange_diamond:\n`;
     }
 
-    const tournamentChannel = client.channels.cache.get(channelID);
-    tournamentChannel.send(formatedText);
+    
+    channel.send(formatedText);
 
     res.status(200).send();
 })
 
 app.post('/api/finish', (req, res) => {
+    const channel = client.channels.cache.get(channelID);
 
     const winner = Object.keys(req.body)[0];
 
@@ -131,13 +169,11 @@ app.post('/api/finish', (req, res) => {
     for (const [nickname, points] of Object.entries(req.body)) {
         formatedText += `  **${position++}** - ${nickname} - **${points}** :small_orange_diamond:\n`;
     }
+    
+    channel.send(formatedText);
 
-    const tournamentChannel = client.channels.cache.get(channelID);
-    tournamentChannel.send(formatedText);
-
-    fs.unlink('./message-id', (err) => {
-        res.status(200).send();
-    });
+    fs.unlink('./reg-message-id', (err) => res.status(200).send());
+    fs.unlink('./tracks-message-id', (err) => res.status(200).send());
 
     // const defaultSettings = {
     //     RegisteredPlayersTime: {},
