@@ -37,16 +37,31 @@ UI.settings.pullSettingsBtn.onclick = () => {
 }
 
 
-UI.startTournamentBtn.onclick = () => {
+UI.startTournamentBtn.onclick = async () => {
     if (registeredPlayers.length < 2) return;
 
     const isConfirm = confirm('Registration will be terminated. Continue?');
 
     if (isConfirm) {
-        startTournament(registeredPlayers);
+        await fetch(config.apiURI + '/start')
+        .then(res => {
+            if (res.ok && res.status === 200) {
+                startTournament(registeredPlayers);
 
-        UI.tournament.block.style.display = 'block';
-        UI.settings.block.style.display = 'none';
+                UI.tournament.block.style.display = 'block';
+                UI.settings.block.style.display = 'none';
+
+                showPopup(true, 'Push Start!');
+                console.log(res.status);
+            }
+            else {
+                showPopup(false , 'Error push!');
+            }
+        })
+        .catch(err => {
+            console.log(err);
+        });
+
     }
 
 }
@@ -127,11 +142,13 @@ else {
 }
 
 // if tournament's active
-if (localStorage.RegisteredPlayersPoints) {
+if (localStorage.TournamentActive) {
     UI.settings.block.style.display = 'none';
     UI.tournament.block.style.display = 'block';
 
     startTournament(registeredPlayers);
 
-    updateLeaderboard(JSON.parse(localStorage.RegisteredPlayersPoints));
+    if (localStorage.RegisteredPlayersPoints) {
+        updateLeaderboard(JSON.parse(localStorage.RegisteredPlayersPoints));
+    }
 }

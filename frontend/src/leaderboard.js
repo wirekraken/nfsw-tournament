@@ -17,18 +17,26 @@ else {
 
 UI.tournament.leaderboard.pushBtn.onclick = () => {
 
-    const sorted = sortByPoints(JSON.parse(localStorage.RegisteredPlayersPoints));
+    const sortedPlayers = sortByPoints(JSON.parse(localStorage.RegisteredPlayersPoints));
+    const eventPlayersPosition = JSON.parse(localStorage.EventPlayersPosition);
 
     if (localStorage.EventPlayersPoint) {
         const eventPlayersPoints = JSON.parse(localStorage.EventPlayersPoint);
-
-        for (const [nickname, points] of Object.entries(sorted)) {
-            sorted[nickname] = [points, '+' + eventPlayersPoints[nickname]];
+        for (const [nickname, points] of Object.entries(sortedPlayers)) {
+            sortedPlayers[nickname] = {
+                summaryPoints: points,
+                eventPoints: '+' + eventPlayersPoints[nickname],
+                eventPosition: eventPlayersPosition[nickname]
+            }
         }
     }
     else {
-        for (const [nickname, points] of Object.entries(sorted)) {
-            sorted[nickname] = [points, ''];
+        for (const [nickname, points] of Object.entries(sortedPlayers)) {
+            sortedPlayers[nickname] = {
+                summaryPoints: points,
+                eventPoints: '+' + points,
+                eventPosition: eventPlayersPosition[nickname]
+            }
         }
     }
 
@@ -43,7 +51,7 @@ UI.tournament.leaderboard.pushBtn.onclick = () => {
         body: JSON.stringify({ 
             trackNumber: trackNumber,
             trackName: tracks[trackNumber -1], 
-            players: sorted
+            players: sortedPlayers
         })
     })
     .then(res => {
@@ -96,10 +104,10 @@ function updateLeaderboard(players) {
     const trackNumber = +localStorage.TrackNumber;
     UI.tournament.leaderboard.trackInfo.innerHTML = `Track #${trackNumber} ${isLast}<br>${tracks[trackNumber -1]}`;
 
-    const sorted = sortByPoints(players);
+    const sortedPlayers = sortByPoints(players);
 
     let position = 1;
-    for (const [nickname, points] of Object.entries(sorted)) {
+    for (const [nickname, points] of Object.entries(sortedPlayers)) {
         UI.tournament.leaderboard.playersList.innerHTML += `
             <div class="tournament__leaderboard_list_player">
                 <span class="tournament__leaderboard_list_player-position">${position++}</span>

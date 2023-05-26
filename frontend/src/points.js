@@ -31,7 +31,7 @@ function updateInputs(data) {
 
 UI.settings.pointsSystem.saveBtn.onclick = () => {
     localStorage.PointsSystem = JSON.stringify(pointsSystem);
-    showPopup(true, 'Points saved!');
+    // showPopup(true, 'Points saved!');
     pushSettings('PointsSystem', pointsSystem);
 
     UI.settings.pointsSystem.inputsBlock.parentElement.style.background = 'rgba(0,0,0,.155)';

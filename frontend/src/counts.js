@@ -7,9 +7,13 @@ let registeredPlayers = [];
 
 
 function startTournament(players) {
+
+    localStorage.TournamentActive = true;
+
     registeredPlayers = players;
 
     const currentEventPlayers = {};
+    const eventPlayersPosition = {};
 
     for (const nickname of registeredPlayers) currentEventPlayers[nickname] = 0;
 
@@ -27,6 +31,7 @@ function startTournament(players) {
 
         // let points = pointsSystem[selectElem.getAttribute('st')];
         let points = JSON.parse(localStorage.PointsSystem)[selectElem.getAttribute('st')];
+
         inputElem.value = points;
 
         inputElem.oninput = function() {
@@ -45,6 +50,7 @@ function startTournament(players) {
             }
 
             currentEventPlayers[this.value] = points;
+            eventPlayersPosition[this.value] = this.getAttribute('st');
         }
 
     }
@@ -52,6 +58,8 @@ function startTournament(players) {
 
     UI.tournament.counts.saveBtn.onclick = function (e) {
         e.preventDefault();
+
+        localStorage.EventPlayersPosition = JSON.stringify(eventPlayersPosition);
 
         this.disabled = true;
         UI.tournament.leaderboard.pushBtn.disabled = false;
