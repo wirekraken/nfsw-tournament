@@ -1,12 +1,21 @@
-import { Client, GatewayIntentBits, EmbedBuilder } from 'discord.js';
-import config from './bot-config.json' assert { type: 'json'};
+import { 
+    Client, 
+    GatewayIntentBits, 
+    EmbedBuilder, 
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle 
+} from 'discord.js';
+
+import config from './bot-config.json' assert { type: 'json' };
 
 
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMembers
     ]
 });
 
@@ -26,6 +35,6 @@ client.login(config.BOT_TOKEN);
 
 // });
 
-client.on('ready', () => console.log('Bot is online'));
+client.on('ready', (c) => console.log(`${c.user.tag} is online`));
 
-export { client, EmbedBuilder };
+export { client, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle };

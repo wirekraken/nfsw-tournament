@@ -1,9 +1,14 @@
 import express from 'express';
 import fs from 'fs';
-import { client, EmbedBuilder } from './bot.js';
+import { client, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from './bot.js';
+import roleHandler from './roles.js';
 
 const PORT = 5000;
-const channelID = '1107295843746316309';
+
+const guildId = '770300935321681940';
+const channelId = '1107295843746316309';
+const participantRoleId = '1111916165997002782'; // @racer
+const everyoneRoleId = '770300935321681940'; // @everyone
 
 
 const app = express();
@@ -30,7 +35,7 @@ const updateSettings = async (key, value) => {
 }
 
 const updateMessage = async (fileMessageId, messageBody) => {
-    const channel = client.channels.cache.get(channelID);
+    const channel = client.channels.cache.get(channelId);
 
     const getMsgId = async () => {
         const message = await channel.send({embeds: [messageBody]});
@@ -61,6 +66,24 @@ const updateMessage = async (fileMessageId, messageBody) => {
 
 }
 
+const removeRole = () => {
+    const guild = client.guilds.cache.find(g => g.id === guildId);
+    const role = guild.roles.cache.get(participantRoleId);
+    // console.log(role.name)
+
+    // removing roles
+    guild.members
+        .fetch()
+        .then((members) => {
+            members.forEach(member => {
+                member.roles.remove(role);
+            })
+        })
+        .catch(err => console.log('error removing roles!', err));
+
+    return role.name;
+}
+
 
 app.get('/api/settings', async (req, res) => {
     const settingsJSON = await readFile('./settings.json');
@@ -69,15 +92,46 @@ app.get('/api/settings', async (req, res) => {
 
 app.post('/api/settings', (req, res) => {
     updateSettings(req.body.key, req.body.value);
-    res.status(200).send('saved');
+    res.status(200).send('settings saved!');
 })
+
 
 app.post('/api/welcome', (req, res) => {
-    const channel = client.channels.cache.get(channelID);
-    channel.send(req.body.text);
+    const channel = client.channels.cache.get(channelId);
 
-    res.status(200).send();
+    const addButton = new ButtonBuilder()
+        .setCustomId(participantRoleId)
+        .setLabel('Add me')
+        .setStyle(ButtonStyle.Primary);
+
+    const row = new ActionRowBuilder().addComponents(addButton);
+
+    // button.components.push(
+    //     new ButtonBuilder()
+    //       .setCustomId('1111916165997002782')
+    //       .setLabel('Add me')
+    //       .setStyle(ButtonStyle.Primary)
+    // );
+    // channel.send(req.body.text);
+
+    // let text = `<@&${everyoneRoleId}>`;
+    // let text = `<@&${participantRoleId}>`;
+    let text = '';
+
+    text += req.body.text;
+    text += '\n\nНажмите, если вы хотите получить или убрать роль участника турнира.';
+    text += '\nClick if you want to get or remove the role of a tournament participant.';
+
+    channel.send({
+        content: text,
+        components: [row]
+    });
+
+    client.on('interactionCreate', roleHandler);
+
+    res.status(200).send('success');
 })
+
 
 app.post('/api/regist', async (req, res) => {
 
@@ -87,7 +141,7 @@ app.post('/api/regist', async (req, res) => {
     let position = 1;
 
     for (const [nickname, points] of Object.entries(req.body)) {
-        formatedText += `**${position++}: ${nickname}**  ${points}\n`;
+        formatedText += `**${position++} • ${nickname}** • ${points}\n`;
     }
 
     const timeAttackIconURL = 'https://world-evolved.ru/templates/statistics/images/races/timeattack.png';
@@ -106,7 +160,7 @@ app.post('/api/regist', async (req, res) => {
     updateMessage('./reg-message-id', embedMessage);
     updateSettings('RegisteredPlayersTime', req.body);
 
-    res.status(200).send();
+    res.status(200).send('success!');
 })
 
 app.post('/api/tracks', async (req, res) => {
@@ -118,7 +172,7 @@ app.post('/api/tracks', async (req, res) => {
     let number = 1;
 
     for (const track of req.body) {
-        formatedText += `**${number++} - ${track}**\n`;
+        formatedText += `**${number++} • ${track}**\n`;
     }
 
     const sprintIconURL = 'https://world-evolved.ru/templates/statistics/images/races/sprint.png';
@@ -138,11 +192,11 @@ app.post('/api/tracks', async (req, res) => {
 
     // console.log(embedMessage)
 
-    res.status(200).send();
+    res.status(200).send('success!');
 })
 
 app.get('/api/start', async (req, res) => {
-    const channel = client.channels.cache.get(channelID);
+    const channel = client.channels.cache.get(channelId);
 
     const settingsJSON = await readFile('./settings.json');
     const parsed = JSON.parse(settingsJSON);
@@ -160,26 +214,28 @@ app.get('/api/start', async (req, res) => {
         points += `${position}: **${point}**:small_orange_diamond:  `;
     }
 
-    let formatedText = `:alarm_clock: **Турнир начинается!**\n`;
+    let formatedText = `<@&${participantRoleId}>\n`;
+    formatedText += `:alarm_clock: **Турнир начинается!**\n`;
     formatedText += `:loudspeaker: Игрокам: **${players}** срочно зайти в игру!\n`;
     formatedText += `:alarm_clock: **The tournament begins!**\n`;
     formatedText += `:loudspeaker: Players: **${players}** urgently join the game!\n\n`;
     formatedText += `:checkered_flag: **Трассы. Tracks:**\n${tracks}\n`;
     formatedText += `:large_orange_diamond: **Система очков. Points system:**\n${points}\n`;
+    formatedText += '_                                      _';
 
     channel.send(formatedText);
     // console.log(formatedText)
 
-    res.status(200).send();
+    res.status(200).send('success!');
 })
 
 
 app.post('/api/event', (req, res) => {
-    const channel = client.channels.cache.get(channelID);
+    const channel = client.channels.cache.get(channelId);
 
     const body = req.body;
 
-    let formatedText = `:checkered_flag: **Турнирный заезд. Tournament race #${body.trackNumber}**\n`;
+    let formatedText = `:checkered_flag: **Турнирный заезд. Tournament race #${body.trackNumber}** <@&${participantRoleId}>\n`;
     formatedText += `:triangular_flag_on_post: *${body.trackName}*\n`;
     formatedText += `:chart_with_upwards_trend: Текущая таблица. Current leaderboard\n`;
     
@@ -198,15 +254,16 @@ app.post('/api/event', (req, res) => {
     // console.log(formatedText)
     channel.send(formatedText);
 
-    res.status(200).send();
+    res.status(200).send('success!');
 })
 
 app.post('/api/finish', (req, res) => {
-    const channel = client.channels.cache.get(channelID);
+    const channel = client.channels.cache.get(channelId);
 
     const winner = Object.keys(req.body)[0];
 
-    let formatedText = `:tada: **Турнир окончен!**\nИгроку **${winner}** вручаем этот кубок :trophy:\n`;
+    let formatedText = `<@&${participantRoleId}>\n`;
+    formatedText += `:tada: **Турнир окончен!**\nИгроку **${winner}** вручаем этот кубок :trophy:\n`;
     formatedText += `:tada: **The tournament is over!**\nTo the player **${winner}** we present this cup :trophy:\n`;
     formatedText += `:pushpin: **Итоговая таблица. Final leaderboard**\n`;
     
@@ -220,22 +277,19 @@ app.post('/api/finish', (req, res) => {
     formatedText += '\nВсем спасибо за участие! Удачи и до следующего раза!\n';
     formatedText += 'Thank you for participating! Good luck and see you next time!';
 
+    removeRole();
+
     channel.send(formatedText);
     // console.log(formatedText)
 
     fs.unlink('./reg-message-id', (err) => res.status(200).send());
     fs.unlink('./tracks-message-id', (err) => res.status(200).send());
 
-    // const defaultSettings = {
-    //     RegisteredPlayersTime: {},
-    //     Tracks: {},
-    //     PointsSystem: {}
-    // }
-
     // clear
     fs.writeFile('./settings.json', JSON.stringify({}), (err) => {
         (err) && console.log(err);
     })
+
 })
 
 
