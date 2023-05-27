@@ -1,17 +1,26 @@
 # nfsw-tournament
 ## Installing
 ### Server
-In the root directory, create the `bot-config.json` file and put your bot token:
+In the root directory, create a `bot-config.json` file and put your bot token:
 ```json
-{ "BOT_TOKEN": <token> }
+{ "BOT_TOKEN": "<token>" }
 ```
-In `server.js ` put the ID of the channel to which you want the bot to send messages:
+In the root directory, create a `guild-config.js` file and put put the identification data of your discord guild:
 ```js
-const channelID = '1107295531060953209';
+const config = {
+    guildId: '',
+    channelId: '',
+    participantRoleId: '',
+    everyoneRoleId: ''
+}
+export default config;
 ```
+
 ```bash
 # installing dependencies
 npm install
+# start dev server
+npm run dev
 # running
 node server.js
 ```
